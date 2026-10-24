@@ -130,7 +130,7 @@
     </div>
   </header>
 
-  <!-- STEPPER BAR (6 Adımlı Net Sunum Yönlendiricisi) -->
+  <!-- STEPPER BAR (Granüler ve Gerçekçi 7 Adımlı Sunum Yönlendiricisi) -->
   <section id="stepperNav" class="bg-white border-b border-slate-200 py-2.5 px-4 sticky top-[65px] z-30 shadow-xs">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
       
@@ -139,18 +139,19 @@
         <span class="w-2.5 h-2.5 rounded-full bg-orange-600 animate-pulse"></span>
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Demo Senaryosu:</span>
         <span id="currentStepBadge" class="text-xs font-bold text-slate-900 bg-orange-50 border border-orange-200 px-2.5 py-0.5 rounded-md">
-          1. Adım: Fotoğraflı Bildirim & Eksik Konum Tamamlama
+          1. Adım: Asistan Karşılama Mesajı
         </span>
       </div>
 
       <!-- Step Navigation Buttons -->
       <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto justify-start md:justify-end pb-1 md:pb-0 text-xs font-medium">
-        <button onclick="setStep(1)" id="stepBtn1" class="px-3 py-1.5 rounded-lg transition step-btn-active">1. Bildirim</button>
-        <button onclick="setStep(2)" id="stepBtn2" class="px-3 py-1.5 rounded-lg transition step-btn-inactive">2. YZ Analizi</button>
-        <button onclick="setStep(3)" id="stepBtn3" class="px-3 py-1.5 rounded-lg transition step-btn-inactive">3. Yönetici Onayı</button>
-        <button onclick="setStep(4)" id="stepBtn4" class="px-3 py-1.5 rounded-lg transition step-btn-inactive">4. Mükerrer (2x)</button>
-        <button onclick="setStep(5)" id="stepBtn5" class="px-3 py-1.5 rounded-lg transition step-btn-inactive">5. Çözüldü</button>
-        <button onclick="setStep(6)" id="stepBtn6" class="px-3 py-1.5 rounded-lg transition step-btn-inactive">6. Jüri Analitiği</button>
+        <button onclick="setStep(1)" id="stepBtn1" class="px-2.5 py-1.5 rounded-lg transition step-btn-active">1. Karşılama</button>
+        <button onclick="setStep(2)" id="stepBtn2" class="px-2.5 py-1.5 rounded-lg transition step-btn-inactive">2. Bildirim</button>
+        <button onclick="setStep(3)" id="stepBtn3" class="px-2.5 py-1.5 rounded-lg transition step-btn-inactive">3. Eksik Bilgi</button>
+        <button onclick="setStep(4)" id="stepBtn4" class="px-2.5 py-1.5 rounded-lg transition step-btn-inactive">4. Teşhis (#H104)</button>
+        <button onclick="setStep(5)" id="stepBtn5" class="px-2.5 py-1.5 rounded-lg transition step-btn-inactive">5. Onay & Atama</button>
+        <button onclick="setStep(6)" id="stepBtn6" class="px-2.5 py-1.5 rounded-lg transition step-btn-inactive">6. Mükerrer & Çözüm</button>
+        <button onclick="setStep(7)" id="stepBtn7" class="px-2.5 py-1.5 rounded-lg transition step-btn-inactive">7. Jüri Kanıtı</button>
 
         <div class="h-4 w-px bg-slate-300 mx-1"></div>
 
@@ -168,7 +169,7 @@
   <!-- MAIN DEMO VIEW (Sadeleştirilmiş İki Sütunlu Alan) -->
   <main class="max-w-7xl mx-auto w-full p-4 md:p-6 flex-1 flex flex-col gap-6">
 
-    <!-- SCENARIOS 1 to 5: DUAL VIEW (Sol: SuFix Mobil Uygulaması, Sağ: Yönetici Paneli) -->
+    <!-- SCENARIOS 1 to 6: DUAL VIEW (Sol: SuFix Mobil Uygulaması, Sağ: Yönetici Paneli) -->
     <div id="dualView" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       
       <!-- LEFT: SUFIX NATIVE MOBILE APP (Col 5) -->
@@ -203,12 +204,12 @@
 
             <!-- View Title Indicator -->
             <div id="mobileScreenTitle" class="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
-              Ana Ekran
+              Sorun Bildir (Chat)
             </div>
           </div>
 
           <!-- APP VIEW 1: ANA EKRAN (Dashboard - Sorun Bildir & Geçmiş Bildirimler) -->
-          <div id="mobileAppHomeView" class="flex-1 bg-[#f8fafc] overflow-y-auto p-4 flex flex-col gap-4">
+          <div id="mobileAppHomeView" class="hidden flex-1 bg-[#f8fafc] overflow-y-auto p-4 flex flex-col gap-4">
             
             <!-- User Greeting Card -->
             <div class="p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex items-center justify-between">
@@ -257,7 +258,7 @@
                 </p>
               </div>
 
-              <!-- ACTIVE ISSUE CARD: Sadece bildirim oluştuktan sonra (Adım 2+) gösterilir -->
+              <!-- ACTIVE ISSUE CARD: Sadece bildirim resmileştikten sonra (Adım 4+) gösterilir -->
               <div id="homeActiveReportCard" onclick="setMobileView('tracking')" class="hidden p-3 bg-white rounded-xl border border-slate-200 hover:border-orange-300 transition cursor-pointer shadow-xs group">
                 <div class="flex items-center justify-between mb-1.5">
                   <span class="font-mono text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">#H104</span>
@@ -286,7 +287,7 @@
           </div>
 
           <!-- APP VIEW 2: CHATBOT EKRANI (Sorun Bildir / Asistan Sohbeti) -->
-          <div id="mobileAppChatView" class="hidden flex-1 flex flex-col bg-[#f8fafc] overflow-hidden">
+          <div id="mobileAppChatView" class="flex-1 flex flex-col bg-[#f8fafc] overflow-hidden">
             
             <!-- Chat Top Header Back Button -->
             <div class="px-3 py-2 bg-white border-b border-slate-200 flex items-center justify-between">
@@ -306,11 +307,11 @@
 
             <!-- Chat Input Box -->
             <div class="bg-white border-t border-slate-200 p-2.5 flex items-center gap-2">
-              <div class="flex-1 bg-slate-100 rounded-full px-3 py-1.5 text-xs text-slate-400 flex items-center justify-between">
-                <span>Mesaj yazın veya fotoğraf ekleyin...</span>
-                <i data-lucide="camera" class="w-3.5 h-3.5 text-slate-400"></i>
+              <div class="flex-1 bg-slate-100 rounded-full px-3.5 py-1.5 text-xs text-slate-500 flex items-center justify-between truncate">
+                <span id="chatInputHint" class="truncate">Mesaj yazın veya fotoğraf ekleyin...</span>
+                <i data-lucide="camera" class="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1"></i>
               </div>
-              <button onclick="nextStep()" class="w-7 h-7 rounded-full bg-orange-600 flex items-center justify-center text-white hover:bg-orange-700 transition shadow-xs" title="Senaryoyu İlerlet">
+              <button onclick="nextStep()" class="w-7 h-7 rounded-full bg-orange-600 flex items-center justify-center text-white hover:bg-orange-700 transition shadow-xs shrink-0" title="Sonraki Aşamaya Geç">
                 <i data-lucide="send" class="w-3 h-3"></i>
               </button>
             </div>
@@ -379,14 +380,14 @@
                   </div>
                 </div>
 
-                <!-- Step 3: Yönetici Onayı & Personele Atama -->
+                <!-- Step 3: Yönetici Onayı & Personele Atama (KİŞİ İSMİ GİZLİ) -->
                 <div class="relative flex items-start timeline-step-active" id="timelineStep3">
                   <div class="absolute -left-6 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center text-[9px] font-bold timeline-icon shadow-xs">
                     <i data-lucide="user-check" class="w-3 h-3"></i>
                   </div>
                   <div>
                     <h5 class="text-xs font-bold text-slate-900">3. Birime Atandı</h5>
-                    <p class="text-[10px] text-slate-500">Murat Arslan (Elektrik/Teknik) görevlendirildi (13:38)</p>
+                    <p class="text-[10px] text-slate-500">Yetkili teknik saha personeli görevlendirildi (13:38)</p>
                   </div>
                 </div>
 
@@ -415,12 +416,12 @@
               </div>
             </div>
 
-            <!-- Technician Card Note -->
+            <!-- Technician Card Note: NO PERSONAL NAME ON MOBILE -->
             <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
-              <span class="text-slate-400 block text-[9px] font-semibold uppercase">Görevli Saha Personeli:</span>
+              <span class="text-slate-400 block text-[9px] font-semibold uppercase">Görevli Saha Ekibi:</span>
               <div class="flex items-center justify-between mt-0.5">
-                <span class="font-bold text-slate-800 text-[11px]">Murat Arslan (Elektrik/Tesisat)</span>
-                <span class="text-[9px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-semibold">Görevde</span>
+                <span class="font-bold text-slate-800 text-[11px]">Yapı İşleri — Elektrik/Teknik Saha Ekibi</span>
+                <span class="text-[9px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-semibold">Görevlendirildi</span>
               </div>
             </div>
 
@@ -428,11 +429,11 @@
 
           <!-- App Bottom Navigation Bar -->
           <div class="bg-white border-t border-slate-200 px-6 py-2 flex items-center justify-around text-slate-400">
-            <button onclick="setMobileView('home')" id="appBottomHomeBtn" class="flex flex-col items-center text-orange-600 font-semibold">
+            <button onclick="setMobileView('home')" id="appBottomHomeBtn" class="flex flex-col items-center hover:text-slate-700">
               <i data-lucide="home" class="w-4 h-4"></i>
               <span class="text-[9px] mt-0.5">Ana Ekran</span>
             </button>
-            <button onclick="setMobileView('chat')" id="appBottomChatBtn" class="flex flex-col items-center hover:text-slate-700">
+            <button onclick="setMobileView('chat')" id="appBottomChatBtn" class="flex flex-col items-center text-orange-600 font-semibold">
               <i data-lucide="message-square-plus" class="w-4 h-4"></i>
               <span class="text-[9px] mt-0.5">Sorun Bildir</span>
             </button>
@@ -461,7 +462,7 @@
           <!-- Top Incident Badge & Status -->
           <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100">
             <div class="flex items-center gap-2.5">
-              <span class="text-xs font-mono font-bold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg border border-slate-200">#H104</span>
+              <span id="incidentCodeBadge" class="text-xs font-mono font-bold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg border border-slate-200">#H104</span>
               <span id="prioBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-orange-50 text-orange-700 border border-orange-200">
                 ORTA / HİJYEN ÖNCELİĞİ
               </span>
@@ -533,7 +534,7 @@
                   <div>
                     <span class="text-slate-500 block text-[11px]">Görsel Teşhis & Kök Neden:</span>
                     <p class="text-slate-700 leading-snug">
-                      Görselde cihaz prizden enerji alıyor. Kağıt rulosu mevcut. Sorun alt oval penceredeki kızılötesi (PIR) fotosel sensör optik kirlenmesi veya kart temassızlığı.
+                      Görselde cihaz prizden enerji alıyor. Kağıt rulosu mevcut. Sorun alt oval penceredeki kızılötesi (PIR) fotosel sensör optik arızası veya kart temassızlığı.
                     </p>
                   </div>
                 </div>
@@ -570,14 +571,14 @@
               </div>
             </div>
 
-            <!-- Assigned Staff Info Bar -->
+            <!-- Assigned Staff Info Bar (Shown on Executive side only) -->
             <div id="assignedStaffInfo" class="hidden mt-3 pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-700">
               <span class="flex items-center gap-1.5 font-medium">
                 <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
-                Görevlendirilen Teknisyen: <strong class="text-slate-900">Murat Arslan (Elektrik/Teknik)</strong>
+                Yöneticinin Görevlendirdiği Personel: <strong class="text-slate-900">Murat Arslan (Elektrik/Teknik)</strong>
               </span>
               <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px] font-semibold">
-                Saha İş Emri İletildi ✓
+                İş Emri İletildi ✓
               </span>
             </div>
           </div>
@@ -596,7 +597,7 @@
 
     </div>
 
-    <!-- SCENARIO 6: METRICS & PROOF VIEW (Jüri Sunumu Final Slaytı) -->
+    <!-- SCENARIO 7: METRICS & PROOF VIEW (Jüri Sunumu Final Slaytı) -->
     <div id="metricsView" class="hidden flex-col gap-6">
       <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
         
@@ -689,14 +690,38 @@
   <!-- JAVASCRIPT STATE CONTROLLER -->
   <script>
     let currentStep = 1;
-    let activeMobileView = 'home'; // 'home', 'chat', 'tracking'
+    let activeMobileView = 'chat'; // 'home', 'chat', 'tracking'
     let isCleanMode = false;
 
-    // Realistic In-App Chat Dialogues:
-    // Notice that the bot gives a completely generic location example (İİBF A Blok),
-    // and the student naturally responds with their actual location (Mühendislik B Blok)!
+    // Granular step dialogues:
+    // Step 1: ONLY the Bot's welcome message
+    // Step 2: Welcome + User sends photo & description
+    // Step 3: Welcome + User + Bot asks for missing location (with generic example)
+    // Step 4: Welcome + User + Bot + User gives Mühendislik B Blok + Bot confirms & creates #H104
+    // Step 5: Executive approves -> Mobile shows generic "Teknik saha personeli görevlendirildi"
+    // Step 6: Duplicate merged & issue resolved
     const chatDialogues = {
       step1: [
+        {
+          sender: 'bot',
+          text: '👋 <b>Merhaba Yusufcan!</b> SuFix Kampüs Asistanı\'na hoş geldin.<br><br>Kampüs içinde karşılaştığın herhangi bir arızayı, teknik sorunu veya aksaklığı fotoğraf çekerek ya da kısaca yazarak bana iletebilirsin. Nasıl yardımcı olabilirim?',
+          time: '13:34'
+        }
+      ],
+      step2: [
+        {
+          sender: 'bot',
+          text: '👋 <b>Merhaba Yusufcan!</b> SuFix Kampüs Asistanı\'na hoş geldin.<br><br>Kampüs içinde karşılaştığın herhangi bir arızayı, teknik sorunu veya aksaklığı fotoğraf çekerek ya da kısaca yazarak bana iletebilirsin. Nasıl yardımcı olabilirim?',
+          time: '13:34'
+        },
+        { 
+          sender: 'user', 
+          image: 'docs/problem-foto.jpeg',
+          text: 'hocam tuvalette bu aletin önünde elimi sallıyorum ama hiç kağıt vermiyor, prize takılı ışığı da yanıyor ama hareket algılamıyor', 
+          time: '13:35' 
+        }
+      ],
+      step3: [
         {
           sender: 'bot',
           text: '👋 <b>Merhaba Yusufcan!</b> SuFix Kampüs Asistanı\'na hoş geldin.<br><br>Kampüs içinde karşılaştığın herhangi bir arızayı, teknik sorunu veya aksaklığı fotoğraf çekerek ya da kısaca yazarak bana iletebilirsin. Nasıl yardımcı olabilirim?',
@@ -714,7 +739,7 @@
           time: '13:35' 
         }
       ],
-      step2: [
+      step4: [
         {
           sender: 'bot',
           text: '👋 <b>Merhaba Yusufcan!</b> SuFix Kampüs Asistanı\'na hoş geldin.<br><br>Kampüs içinde karşılaştığın herhangi bir arızayı, teknik sorunu veya aksaklığı fotoğraf çekerek ya da kısaca yazarak bana iletebilirsin. Nasıl yardımcı olabilirim?',
@@ -742,13 +767,12 @@
           time: '13:36' 
         }
       ],
-      step3: [
+      step5: [
         { sender: 'user', text: 'Mühendislik Fakültesi B Blok zemin kattaki erkekler tuvaletindeyim', time: '13:36' },
         { sender: 'bot', text: '✅ Arıza kaydınız oluşturuldu: <b>#H104</b>', time: '13:36' },
-        { sender: 'bot', text: '👨‍💼 <b>Durum Güncellemesi (#H104):</b> Talebiniz yönetici tarafından onaylandı ve <b>Murat Arslan (Elektrik/Teknik Personel)</b> görevlendirildi. Teknisyen arıza mahalline sevk edildi.<br><br><button onclick="setMobileView(\'tracking\')" class="mt-1 px-3 py-1.5 bg-slate-800 text-white rounded-lg text-[11px] font-bold flex items-center gap-1">📋 Canlı Aşamaları İzle</button>', time: '13:38' }
+        { sender: 'bot', text: '👨‍💼 <b>Durum Güncellemesi (#H104):</b> Talebiniz yönetici tarafından onaylandı ve <b>yetkili teknik saha personeli</b> görevlendirildi. Ekip arıza mahalline yönlendirildi.<br><br><button onclick="setMobileView(\'tracking\')" class="mt-1 px-3 py-1.5 bg-slate-800 text-white rounded-lg text-[11px] font-bold flex items-center gap-1">📋 Canlı Aşamaları İzle</button>', time: '13:38' }
       ],
-      step4: [
-        // Duplicate report from Student 2
+      step6: [
         { 
           sender: 'user2', 
           text: 'zemin kattaki erkekler tuvaletinde mavi havluluk makinesi çalışmıyor kağıt vermiyor', 
@@ -756,14 +780,12 @@
         },
         { 
           sender: 'bot', 
-          text: 'ℹ️ <b>Mevcut İş Emri Bulundu (#H104):</b><br>Bildirdiğiniz arıza için teknik personelimiz şu anda tuvalette inceleme yapmaktadır.<br><br>Sizi de bildirim listesine ekledik. Cihaz onarıldığında size de mesaj gelecektir.<br><br><button onclick="setMobileView(\'tracking\')" class="mt-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-[11px] font-bold flex items-center gap-1">📋 Müdahale Durumunu İzle</button>', 
+          text: 'ℹ️ <b>Mevcut İş Emri Bulundu (#H104):</b><br>Bildirdiğiniz arıza için teknik personelimiz şu anda tuvalette inceleme yapmaktadır.<br><br>Sizi de bildirim listesine ekledik. Cihaz onarıldığında size de mesaj gelecektir.', 
           time: '13:42' 
-        }
-      ],
-      step5: [
+        },
         { 
           sender: 'bot', 
-          text: '🎉 <b>Arızanız Giderildi! (#H104)</b><br><br>Mühendislik B Blok zemin kat tuvaletindeki sensörlü havlu makinesi onarılmıştır.<br><br><i>Teknisyen Notu:</i> "Fotosel merceği temizlendi, sensör kalibrasyonu yapıldı. Cihaz faal durumda teslim edildi."<br><br><button onclick="setMobileView(\'tracking\')" class="mt-1 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-[11px] font-bold flex items-center gap-1">✓ İşlem Raporunu İncele</button>', 
+          text: '🎉 <b>Arızanız Giderildi! (#H104)</b><br><br>Mühendislik B Blok zemin kat tuvaletindeki sensörlü havlu makinesi onarılmıştır.<br><br><i>Teknisyen Kapanış Notu:</i> "Fotosel merceği temizlendi, sensör kalibrasyonu yapıldı. Cihaz faal durumda teslim edildi."', 
           time: '13:50' 
         }
       ]
@@ -772,24 +794,61 @@
     // Configuration per Step for Right Panel & Timeline Status
     const stepConfigs = {
       1: {
-        badge: '1. Adım: Fotoğraflı Bildirim & Eksik Konum Tamamlama',
-        prio: 'ORTA / HİJYEN ÖNCELİĞİ',
+        badge: '1. Adım: Asistan Karşılama Mesajı',
+        prio: 'BEKLEMEDE',
+        statusText: 'Sohbet Başlatıldı',
+        statusClass: 'bg-slate-100 text-slate-700 border-slate-200',
+        duplicate: false,
+        rawSpeech: '— (Kullanıcı henüz mesaj göndermedi)',
+        studentGuess: '—',
+        location: 'Konum Henüz Belirsiz',
+        approved: false,
+        hasReportOnHome: false,
+        inputHint: 'Fotoğraf çekin veya arızayı anlatın...',
+        cargoStatus: 'Henüz Kayıt Yok',
+        homeStatus: 'Kayıt Yok',
+        cargoStepLevel: 0,
+        juryTitle: '1. Adım Katma Değeri — Kolay Giriş Kapısı:',
+        juryText: 'Öğrenci karmaşık form sayfaları veya teknik kategori listeleriyle boğuşmaz; modern bir chat arayüzünde sıcak bir karşılama ile doğrudan sorunu yazmaya davet edilir.'
+      },
+      2: {
+        badge: '2. Adım: Kullanıcının Fotoğraflı Bildirimi',
+        prio: 'İNCELEMEDE',
+        statusText: 'Fotoğraf Yüklendi',
+        statusClass: 'bg-amber-50 text-amber-700 border-amber-200',
+        duplicate: false,
+        rawSpeech: '“tuvalette bu aletin önünde elimi sallıyorum ama hiç kağıt vermiyor, prize takılı ama algılamıyor”',
+        studentGuess: 'Temizlik / Kağıt Bitti (Hatalı)',
+        location: 'Konum Henüz Belirtilmedi',
+        approved: false,
+        hasReportOnHome: false,
+        inputHint: 'Konum bekleniyor...',
+        cargoStatus: 'Analiz Ediliyor...',
+        homeStatus: 'Analiz Ediliyor',
+        cargoStepLevel: 1,
+        juryTitle: '2. Adım Katma Değeri — Çok Modlu (Multimodal) Girdi:',
+        juryText: 'Öğrenci cihazın adını bilmese bile fotoğrafını çeker ve gündelik dille arızayı tarif eder. YZ görsel üzerinden cihazı (Karex havluluk) tanır.'
+      },
+      3: {
+        badge: '3. Adım: Eksik Konum İstemi & Farklı Örnek Şablon',
+        prio: 'ORTA / HİJYEN',
         statusText: 'Eksik Konum Bekleniyor',
         statusClass: 'bg-amber-50 text-amber-700 border-amber-200',
         duplicate: false,
-        rawSpeech: '“bu aletin önünde elimi sallıyorum ama hiç kağıt vermiyor, prize takılı ama hareket algılamıyor”',
+        rawSpeech: '“tuvalette bu aletin önünde elimi sallıyorum ama hiç kağıt vermiyor...”',
         studentGuess: 'Temizlik / Kağıt Bitti (Hatalı)',
-        location: 'Konum Henüz Belirsiz...',
+        location: 'Konum Bekleniyor (Örnek: İİBF A Blok)',
         approved: false,
-        hasReportOnHome: false, // In Step 1, Home Screen has NO active report yet!
+        hasReportOnHome: false,
+        inputHint: 'Mühendislik Fakültesi B Blok zemin kat...',
         cargoStatus: '1/5 Bildirim Alındı (Konum Bekleniyor)',
         homeStatus: 'Konum Bekleniyor',
         cargoStepLevel: 1,
-        juryTitle: '1. Adım Katma Değeri — Fotoğraftan Teşhis & Eksik Bilgi Tamamlama:',
-        juryText: 'Öğrenci cihazın adını bilmese bile sadece fotoğrafını çeker; yapay zekâ cihazı tanır, eksik olan konum bilgisini nazikçe sorarak iş emrini yapılandırır.'
+        juryTitle: '3. Adım Katma Değeri — Akıllı Eksik Bilgi Tamamlama:',
+        juryText: 'Asistan konumun eksik olduğunu anlar. Formu reddetmek yerine bağımsız bir kampüs örneği (İİBF) vererek öğrenciyi kendi yerini belirtmeye yönlendirir.'
       },
-      2: {
-        badge: '2. Adım: YZ Görsel Analizi & Kök Neden Teşhisi',
+      4: {
+        badge: '4. Adım: Konum Tamamlama & YZ Görsel Teşhisi',
         prio: 'ORTA / HİJYEN ÖNCELİĞİ',
         statusText: 'Yönetici Onayı Bekliyor',
         statusClass: 'bg-orange-50 text-orange-700 border-orange-200',
@@ -798,15 +857,16 @@
         studentGuess: 'Temizlik / Kağıt Bitti (Hatalı)',
         location: 'Mühendislik B Blok · Zemin Kat · Erkekler WC',
         approved: false,
-        hasReportOnHome: true, // In Step 2, report is registered!
+        hasReportOnHome: true, // Report #H104 is officially registered!
+        inputHint: 'Arıza kaydı oluşturuldu (#H104)',
         cargoStatus: '2/5 YZ Teşhis Etti (Yönetici Onayında)',
         homeStatus: 'Onay Bekliyor',
         cargoStepLevel: 2,
-        juryTitle: '2. Adım Katma Değeri — Uzmanlık Boşluğunun Çözülmesi:',
+        juryTitle: '4. Adım Katma Değeri — Uzmanlık Boşluğunun Çözümü:',
         juryText: 'Öğrenci "kağıt bitti" sanıp Temizlik birimine iletecekti. YZ görselden kağıdın olduğunu, arızanın elektronik fotoselde olduğunu anlayıp Yapı İşleri Elektrik birimine yönlendirdi.'
       },
-      3: {
-        badge: '3. Adım: Yönetici Onayı & Sahaya Görevlendirme',
+      5: {
+        badge: '5. Adım: Yönetici Onayı & Sahaya Görevlendirme',
         prio: 'ORTA / HİJYEN ÖNCELİĞİ',
         statusText: 'Personele Atandı',
         statusClass: 'bg-blue-50 text-blue-700 border-blue-200',
@@ -816,31 +876,15 @@
         location: 'Mühendislik B Blok · Zemin Kat · Erkekler WC',
         approved: true,
         hasReportOnHome: true,
-        cargoStatus: '3/5 Teknisyene Atandı (Murat Arslan Sevk Edildi)',
-        homeStatus: 'Teknisyen Sevk Edildi',
+        inputHint: 'Teknisyen sahaya sevk edildi',
+        cargoStatus: '3/5 Birime Atandı (Teknik Personel Görevlendirildi)',
+        homeStatus: 'Teknik Personel Sevk Edildi',
         cargoStepLevel: 3,
-        juryTitle: '3. Adım Katma Değeri — İnsan Denetimi (Human-in-the-Loop):',
-        juryText: 'YZ son kararı vermez; önerir. Yönetici öneriyi tek tıkla doğrular ve saha personeline anlık iş emri iletilir.'
+        juryTitle: '5. Adım Katma Değeri — İnsan Denetimi & Gizlilik:',
+        juryText: 'Yönetici öneriyi onaylar. Öğrenciye personelin özel ismi değil, kurumsal olarak teknik personelin atandığı bilgisi şeffaflıkla bildirilir.'
       },
-      4: {
-        badge: '4. Adım: Mükerrer Bildirim Tespiti & Konsolidasyon',
-        prio: 'ORTA / HİJYEN ÖNCELİĞİ',
-        statusText: 'İşlemde (2x Bildirim)',
-        statusClass: 'bg-blue-50 text-blue-700 border-blue-200',
-        duplicate: true,
-        rawSpeech: '“zemin kattaki erkekler tuvaletinde mavi havluluk makinesi çalışmıyor kağıt vermiyor” (2. Öğrenci)',
-        studentGuess: 'Aynı Olayla Eşleşti',
-        location: 'Mühendislik B Blok · Zemin Kat · Erkekler WC',
-        approved: true,
-        hasReportOnHome: true,
-        cargoStatus: '4/5 Ekip Sahada Müdahale Ediyor (2x Bildirim)',
-        homeStatus: 'Ekip Sahada',
-        cargoStepLevel: 4,
-        juryTitle: '4. Adım Katma Değeri — Gereksiz Çağrı ve Seferberlik Tasarrufu (%42.8):',
-        juryText: 'Aynı tuvaletteki havluluk için ikinci bir öğrenci yazdığında yeni iş emri açılmaz; açık olan #H104 ile birleştirilir ve öğrenciye "Ekibimiz zaten çalışıyor" yanıtı verilir.'
-      },
-      5: {
-        badge: '5. Adım: Saha Çözümü (Done) & Otomatik Bilgilendirme',
+      6: {
+        badge: '6. Adım: Mükerrer Tespiti & Başarılı Çözüm',
         prio: 'ÇÖZÜLDÜ',
         statusText: 'Giderildi (Tamamlandı)',
         statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -850,31 +894,50 @@
         location: 'Mühendislik B Blok · Zemin Kat · Erkekler WC',
         approved: true,
         hasReportOnHome: true,
+        inputHint: 'Arıza başarıyla kapatıldı',
         cargoStatus: '5/5 Giderildi & Kapatıldı ✓',
         homeStatus: 'Çözüldü ✓',
         cargoStepLevel: 5,
-        juryTitle: '5. Adım Katma Değeri — Şeffaf Süreç ve Süreç Takip Deneyimi:',
-        juryText: 'Teknisyen işi kapattığı anda, süreç takibi "Tamamlandı"ya döner ve tüm bildiren öğrencilerin telefonuna eş zamanlı çözüm bildirimi gider.'
+        juryTitle: '6. Adım Katma Değeri — Mükerrer Tasarrufu & Kapanış:',
+        juryText: 'Aynı tuvalet için gelen 2. bildirim tek iş emrinde birleştirildi. Teknisyen işi bitirdiğinde her iki öğrenciye de aynı anda çözüm bildirimi iletildi.'
+      },
+      7: {
+        badge: '7. Adım: Jüri Analitiği & Kanıt Verileri',
+        prio: 'RAPOR',
+        statusText: 'Sistem Raporu',
+        statusClass: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+        duplicate: false,
+        rawSpeech: '—',
+        studentGuess: '—',
+        location: '—',
+        approved: true,
+        hasReportOnHome: true,
+        inputHint: 'Analitik görünümü',
+        cargoStatus: 'Tamamlandı',
+        homeStatus: 'Tamamlandı',
+        cargoStepLevel: 5,
+        juryTitle: '7. Adım Katma Değeri — Rakamlarla Değer Kanıtı:',
+        juryText: '%66 Öğrenci form yanılgısı, %94.2 SuFix YZ doğruluğu ve %42.8 önlenen mükerrer personel çıkışı.'
       }
     };
 
     function setStep(step) {
       currentStep = step;
 
-      // Update Stepper Buttons
-      for (let i = 1; i <= 6; i++) {
+      // Update Stepper Buttons (1 to 7)
+      for (let i = 1; i <= 7; i++) {
         const btn = document.getElementById(`stepBtn${i}`);
         if (i === step) {
-          btn.className = "px-3 py-1.5 rounded-lg transition step-btn-active";
+          btn.className = "px-2.5 py-1.5 rounded-lg transition step-btn-active";
         } else {
-          btn.className = "px-3 py-1.5 rounded-lg transition step-btn-inactive";
+          btn.className = "px-2.5 py-1.5 rounded-lg transition step-btn-inactive";
         }
       }
 
-      if (step === 6) {
+      if (step === 7) {
         document.getElementById('dualView').classList.add('hidden');
         document.getElementById('metricsView').classList.remove('hidden');
-        document.getElementById('currentStepBadge').innerText = "6. Adım: Jüri Analitiği & Kanıt";
+        document.getElementById('currentStepBadge').innerText = "7. Adım: Jüri Analitiği & Kanıt";
       } else {
         document.getElementById('dualView').classList.remove('hidden');
         document.getElementById('metricsView').classList.add('hidden');
@@ -886,11 +949,12 @@
         document.getElementById('incidentLocationText').innerText = cfg.location;
         document.getElementById('juryFocusTitle').innerText = cfg.juryTitle;
         document.getElementById('juryFocusText').innerText = cfg.juryText;
+        document.getElementById('chatInputHint').innerText = cfg.inputHint;
 
         // Status badge
         const statusBadge = document.getElementById('statusBadge');
         statusBadge.className = `text-xs font-bold px-3 py-1 rounded-full border flex items-center gap-1.5 ${cfg.statusClass}`;
-        statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full ${step === 5 ? 'bg-emerald-500' : 'bg-orange-500 animate-pulse'}"></span> ${cfg.statusText}`;
+        statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full ${step === 6 ? 'bg-emerald-500' : 'bg-orange-500 animate-pulse'}"></span> ${cfg.statusText}`;
 
         // Home Screen Active vs Empty state management
         const emptyCard = document.getElementById('homeEmptyReportCard');
@@ -903,7 +967,7 @@
           activeCard.classList.remove('hidden');
           countBadge.innerText = "1 Aktif Bildirim";
           trackingDot.classList.remove('hidden');
-          document.getElementById('homeCardStatusBadge').innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${step === 5 ? 'bg-emerald-500' : 'bg-orange-500 animate-pulse'}"></span> ${cfg.homeStatus}`;
+          document.getElementById('homeCardStatusBadge').innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${step === 6 ? 'bg-emerald-500' : 'bg-orange-500 animate-pulse'}"></span> ${cfg.homeStatus}`;
         } else {
           emptyCard.classList.remove('hidden');
           activeCard.classList.add('hidden');
@@ -935,13 +999,12 @@
         // Update Timeline Steps
         updateTimelineSteps(cfg.cargoStepLevel, cfg.cargoStatus);
 
-        // Natural presentation view transitions:
-        // Step 1: Open chat screen showing welcome greeting and first message exchange
-        // Step 2: In chat, student clarifies location & AI responds
-        // Step 3, 4, 5: Open timeline tracking view
-        if (step === 1 || step === 2) {
+        // Natural view transitions:
+        // Steps 1 to 4: Chat screen active
+        // Steps 5 & 6: Timeline tracking view active
+        if (step <= 4) {
           setMobileView('chat');
-        } else if (step >= 3) {
+        } else {
           setMobileView('tracking');
         }
 
@@ -960,7 +1023,8 @@
       else if (currentStep === 2) msgs = chatDialogues.step2;
       else if (currentStep === 3) msgs = chatDialogues.step3;
       else if (currentStep === 4) msgs = chatDialogues.step4;
-      else msgs = chatDialogues.step5;
+      else if (currentStep === 5) msgs = chatDialogues.step5;
+      else msgs = chatDialogues.step6;
 
       msgs.forEach(m => {
         const isUser = m.sender === 'user' || m.sender === 'user2';
@@ -1048,11 +1112,11 @@
     }
 
     function approveIncidentAction() {
-      setStep(3);
+      setStep(5);
     }
 
     function nextStep() {
-      if (currentStep < 6) {
+      if (currentStep < 7) {
         setStep(currentStep + 1);
       } else {
         setStep(1);
@@ -1081,7 +1145,7 @@
       else if (e.key === 'ArrowLeft') prevStep();
     });
 
-    // Boot: Start cleanly on Home screen or Step 1
+    // Boot on Step 1 (Welcome message)
     window.onload = () => {
       setStep(1);
     };
