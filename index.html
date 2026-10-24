@@ -239,15 +239,26 @@
               <div class="absolute -right-3 -bottom-3 w-20 h-20 bg-white/10 rounded-full pointer-events-none"></div>
             </button>
 
-            <!-- SECONDARY SECTION: GEÇMİŞ BİLDİRİLEN SORUNLAR -->
+            <!-- SECONDARY SECTION: BİLDİRİLEN SORUNLAR -->
             <div class="flex-1 flex flex-col gap-2">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-800">Bildirilen Sorunlarım</span>
-                <span class="text-[10px] text-slate-400">1 Aktif Bildirim</span>
+                <span id="homeReportCountBadge" class="text-[10px] text-slate-400">0 Aktif Bildirim</span>
               </div>
 
-              <!-- Issue Card (Click to open tracking) -->
-              <div onclick="setMobileView('tracking')" class="p-3 bg-white rounded-xl border border-slate-200 hover:border-orange-300 transition cursor-pointer shadow-xs group">
+              <!-- EMPTY STATE: Henüz bildirim yapılmamışken gösterilir -->
+              <div id="homeEmptyReportCard" class="p-6 bg-white rounded-xl border border-dashed border-slate-300 text-center flex flex-col items-center justify-center">
+                <div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2">
+                  <i data-lucide="inbox" class="w-4 h-4"></i>
+                </div>
+                <span class="text-xs font-semibold text-slate-700">Aktif bildiriminiz bulunmuyor</span>
+                <p class="text-[10px] text-slate-400 mt-0.5 max-w-[220px]">
+                  Yukarıdaki "Sorun Bildir" butonuna basarak arıza iletebilirsiniz.
+                </p>
+              </div>
+
+              <!-- ACTIVE ISSUE CARD: Sadece bildirim oluştuktan sonra (Adım 2+) gösterilir -->
+              <div id="homeActiveReportCard" onclick="setMobileView('tracking')" class="hidden p-3 bg-white rounded-xl border border-slate-200 hover:border-orange-300 transition cursor-pointer shadow-xs group">
                 <div class="flex items-center justify-between mb-1.5">
                   <span class="font-mono text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">#H104</span>
                   <span id="homeCardStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200 flex items-center gap-1">
@@ -269,6 +280,7 @@
                   </span>
                 </div>
               </div>
+
             </div>
 
           </div>
@@ -311,7 +323,7 @@
             <!-- Tracking Top Header Back Button -->
             <div class="flex items-center justify-between pb-2 border-b border-slate-100">
               <button onclick="setMobileView('home')" class="text-xs font-medium text-slate-600 flex items-center gap-1 hover:text-slate-900">
-                <i data-lucide="chevron-left" class="w-4 h-4"></i> Geri
+                <i data-lucide="chevron-left" class="w-4 h-4"></i> Ana Ekran
               </button>
               <span class="text-xs font-bold text-slate-800">Arıza Takip Detayı</span>
               <span class="font-mono text-[10px] text-slate-400 font-bold">#H104</span>
@@ -427,7 +439,7 @@
             <button onclick="setMobileView('tracking')" id="appBottomTrackingBtn" class="flex flex-col items-center hover:text-slate-700 relative">
               <i data-lucide="clock" class="w-4 h-4"></i>
               <span class="text-[9px] mt-0.5">Bildirimlerim</span>
-              <span class="w-1.5 h-1.5 rounded-full bg-orange-600 absolute -top-0.5 right-2"></span>
+              <span id="navTrackingDot" class="hidden w-1.5 h-1.5 rounded-full bg-orange-600 absolute -top-0.5 right-2"></span>
             </button>
           </div>
 
@@ -521,7 +533,7 @@
                   <div>
                     <span class="text-slate-500 block text-[11px]">Görsel Teşhis & Kök Neden:</span>
                     <p class="text-slate-700 leading-snug">
-                      Görselde cihaz prizden enerji alıyor. Kağıt rulosu mevcut. Sorun alt oval penceredeki kızılötesi (PIR) fotosel sensör optik arızası veya temassızlığı.
+                      Görselde cihaz prizden enerji alıyor. Kağıt rulosu mevcut. Sorun alt oval penceredeki kızılötesi (PIR) fotosel sensör optik kirlenmesi veya kart temassızlığı.
                     </p>
                   </div>
                 </div>
@@ -574,7 +586,7 @@
           <div class="bg-white border-l-4 border-orange-600 p-3.5 rounded-r-xl shadow-xs text-xs">
             <span class="font-bold text-slate-900 block mb-0.5" id="juryFocusTitle">Jüriye Gösterilen Katma Değer:</span>
             <p class="text-slate-600 leading-relaxed" id="juryFocusText">
-              Öğrenci arızanın adını bilmese bile sadece fotoğrafını çeker; yapay zekâ cihazı ve arızayı görselden teşhis eder, eksik konumu sohbetle tamamlar.
+              Öğrenci cihazın adını bilmese bile sadece fotoğrafını çeker; yapay zekâ cihazı ve arızayı görselden teşhis eder, eksik konumu sohbetle tamamlar.
             </p>
           </div>
 
@@ -680,48 +692,60 @@
     let activeMobileView = 'home'; // 'home', 'chat', 'tracking'
     let isCleanMode = false;
 
-    // Realistic In-App Chat Dialogues for docs/problem-foto.jpeg
+    // Realistic In-App Chat Dialogues:
+    // Notice that the bot gives a completely generic location example (İİBF A Blok),
+    // and the student naturally responds with their actual location (Mühendislik B Blok)!
     const chatDialogues = {
       step1: [
+        {
+          sender: 'bot',
+          text: '👋 <b>Merhaba Yusufcan!</b> SuFix Kampüs Asistanı\'na hoş geldin.<br><br>Kampüs içinde karşılaştığın herhangi bir arızayı, teknik sorunu veya aksaklığı fotoğraf çekerek ya da kısaca yazarak bana iletebilirsin. Nasıl yardımcı olabilirim?',
+          time: '13:34'
+        },
         { 
           sender: 'user', 
           image: 'docs/problem-foto.jpeg',
-          text: 'bu aletin önünde elimi sallıyorum ama hiç kağıt vermiyor, prize takılı ama hareket algılamıyor', 
+          text: 'hocam tuvalette bu aletin önünde elimi sallıyorum ama hiç kağıt vermiyor, prize takılı ışığı da yanıyor ama hareket algılamıyor', 
           time: '13:35' 
         },
         { 
           sender: 'bot', 
-          text: '📍 Fotoğrafı ve arıza bildirimini aldım! Fotoselli havlulukta hareket sensörü arızası tespit edildi.<br><br>Ekiplerimizin müdahale edebilmesi için bu tuvaletin <b>fakülte, blok ve kat bilgisini</b> yazar mısınız?<br><br><i>Örnek: Mühendislik B Blok zemin kat erkekler wc</i>', 
+          text: '📍 Fotoğrafı ve açıklamayı aldım! Fotoselli havlulukta hareket sensörü arızası tespit edildi.<br><br>Ekiplerimizin hemen arıza mahalline ulaşabilmesi için bu tuvaletin <b>fakülte, blok ve kat bilgisini</b> paylaşabilir misin?<br><br>💡 <i>Örnek şablon: İktisadi ve İdari Bilimler Fakültesi A Blok 2. kat koridoru</i>', 
           time: '13:35' 
         }
       ],
       step2: [
+        {
+          sender: 'bot',
+          text: '👋 <b>Merhaba Yusufcan!</b> SuFix Kampüs Asistanı\'na hoş geldin.<br><br>Kampüs içinde karşılaştığın herhangi bir arızayı, teknik sorunu veya aksaklığı fotoğraf çekerek ya da kısaca yazarak bana iletebilirsin. Nasıl yardımcı olabilirim?',
+          time: '13:34'
+        },
         { 
           sender: 'user', 
           image: 'docs/problem-foto.jpeg',
-          text: 'bu aletin önünde elimi sallıyorum ama hiç kağıt vermiyor, prize takılı ama hareket algılamıyor', 
+          text: 'hocam tuvalette bu aletin önünde elimi sallıyorum ama hiç kağıt vermiyor, prize takılı ışığı da yanıyor ama hareket algılamıyor', 
           time: '13:35' 
         },
         { 
           sender: 'bot', 
-          text: '📍 Fotoğrafı ve arıza bildirimini aldım! Ekiplerimizin müdahale edebilmesi için <b>fakülte, blok ve kat bilgisini</b> yazar mısınız?', 
+          text: '📍 Fotoğrafı ve açıklamayı aldım! Fotoselli havlulukta hareket sensörü arızası tespit edildi. Ekiplerimizin hemen arıza mahalline ulaşabilmesi için bu tuvaletin <b>fakülte, blok ve kat bilgisini</b> paylaşabilir misin?<br><br>💡 <i>Örnek şablon: İktisadi ve İdari Bilimler Fakültesi A Blok 2. kat koridoru</i>', 
           time: '13:35' 
         },
         { 
           sender: 'user', 
-          text: 'Mühendislik Fakültesi B Blok zemin kat erkekler tuvaleti', 
+          text: 'Mühendislik Fakültesi B Blok zemin kattaki erkekler tuvaletindeyim', 
           time: '13:36' 
         },
         { 
           sender: 'bot', 
-          text: '✅ Teşekkürler! Arıza kaydınız oluşturuldu.<br><b>Takip No: #H104</b><br><br>🤖 <b>Görsel Teşhis:</b> Karex marka cihazda kızılötesi fotosel sensör arızası belirlendi. Bildirim <i>Yapı İşleri — Elektrik/Teknik</i> birimine iletilmek üzere yönetici onayına sunuldu.<br><br><button onclick="setMobileView(\'tracking\')" class="mt-1 px-3 py-1.5 bg-orange-600 text-white rounded-lg text-[11px] font-bold flex items-center gap-1 shadow-xs">📋 Süreç Durumunu Takip Et (#H104)</button>', 
+          text: '✅ Teşekkürler, konum kaydedildi! Arıza Takip Kodunuz: <b>#H104</b>.<br><br>🤖 <b>Çok Modlu YZ Teşhisi:</b> Görselden cihazın enerjili olduğu ve kağıt rulosunun bulunduğu belirlendi. Kök neden: Fotosel (PIR) sensör optik kirlenmesi / kalibrasyon kaybı. Bildirim <i>Yapı İşleri — Elektrik/Teknik</i> birimine iletilmek üzere yönetici onayına sunuldu.<br><br><button onclick="setMobileView(\'tracking\')" class="mt-1 px-3 py-1.5 bg-orange-600 text-white rounded-lg text-[11px] font-bold flex items-center gap-1 shadow-xs">📋 Süreç Durumunu Takip Et (#H104)</button>', 
           time: '13:36' 
         }
       ],
       step3: [
-        { sender: 'user', text: 'Mühendislik Fakültesi B Blok zemin kat erkekler tuvaleti...', time: '13:36' },
+        { sender: 'user', text: 'Mühendislik Fakültesi B Blok zemin kattaki erkekler tuvaletindeyim', time: '13:36' },
         { sender: 'bot', text: '✅ Arıza kaydınız oluşturuldu: <b>#H104</b>', time: '13:36' },
-        { sender: 'bot', text: '👨‍💼 <b>Durum Güncellemesi (#H104):</b> Talebiniz yönetici tarafından onaylandı ve <b>Murat Arslan (Elektrik/Teknik Personel)</b> görevlendirildi. Ekip arıza mahalline sevk edildi.<br><br><button onclick="setMobileView(\'tracking\')" class="mt-1 px-3 py-1.5 bg-slate-800 text-white rounded-lg text-[11px] font-bold flex items-center gap-1">📋 Canlı Aşamaları İzle</button>', time: '13:38' }
+        { sender: 'bot', text: '👨‍💼 <b>Durum Güncellemesi (#H104):</b> Talebiniz yönetici tarafından onaylandı ve <b>Murat Arslan (Elektrik/Teknik Personel)</b> görevlendirildi. Teknisyen arıza mahalline sevk edildi.<br><br><button onclick="setMobileView(\'tracking\')" class="mt-1 px-3 py-1.5 bg-slate-800 text-white rounded-lg text-[11px] font-bold flex items-center gap-1">📋 Canlı Aşamaları İzle</button>', time: '13:38' }
       ],
       step4: [
         // Duplicate report from Student 2
@@ -757,11 +781,12 @@
         studentGuess: 'Temizlik / Kağıt Bitti (Hatalı)',
         location: 'Konum Henüz Belirsiz...',
         approved: false,
+        hasReportOnHome: false, // In Step 1, Home Screen has NO active report yet!
         cargoStatus: '1/5 Bildirim Alındı (Konum Bekleniyor)',
         homeStatus: 'Konum Bekleniyor',
         cargoStepLevel: 1,
         juryTitle: '1. Adım Katma Değeri — Fotoğraftan Teşhis & Eksik Bilgi Tamamlama:',
-        juryText: 'Öğrenci cihazın adını bilmese bile fotoğrafını çeker; yapay zekâ cihazı tanır, eksik olan konum bilgisini nazikçe sorarak iş emrini yapılandırır.'
+        juryText: 'Öğrenci cihazın adını bilmese bile sadece fotoğrafını çeker; yapay zekâ cihazı tanır, eksik olan konum bilgisini nazikçe sorarak iş emrini yapılandırır.'
       },
       2: {
         badge: '2. Adım: YZ Görsel Analizi & Kök Neden Teşhisi',
@@ -769,10 +794,11 @@
         statusText: 'Yönetici Onayı Bekliyor',
         statusClass: 'bg-orange-50 text-orange-700 border-orange-200',
         duplicate: false,
-        rawSpeech: '“Mühendislik Fakültesi B Blok zemin kat erkekler tuvaleti”',
+        rawSpeech: '“Mühendislik Fakültesi B Blok zemin kattaki erkekler tuvaletindeyim”',
         studentGuess: 'Temizlik / Kağıt Bitti (Hatalı)',
         location: 'Mühendislik B Blok · Zemin Kat · Erkekler WC',
         approved: false,
+        hasReportOnHome: true, // In Step 2, report is registered!
         cargoStatus: '2/5 YZ Teşhis Etti (Yönetici Onayında)',
         homeStatus: 'Onay Bekliyor',
         cargoStepLevel: 2,
@@ -789,6 +815,7 @@
         studentGuess: 'Elektrik/Donanım (Düzeltildi)',
         location: 'Mühendislik B Blok · Zemin Kat · Erkekler WC',
         approved: true,
+        hasReportOnHome: true,
         cargoStatus: '3/5 Teknisyene Atandı (Murat Arslan Sevk Edildi)',
         homeStatus: 'Teknisyen Sevk Edildi',
         cargoStepLevel: 3,
@@ -805,6 +832,7 @@
         studentGuess: 'Aynı Olayla Eşleşti',
         location: 'Mühendislik B Blok · Zemin Kat · Erkekler WC',
         approved: true,
+        hasReportOnHome: true,
         cargoStatus: '4/5 Ekip Sahada Müdahale Ediyor (2x Bildirim)',
         homeStatus: 'Ekip Sahada',
         cargoStepLevel: 4,
@@ -821,6 +849,7 @@
         studentGuess: 'Başarıyla Kapatıldı',
         location: 'Mühendislik B Blok · Zemin Kat · Erkekler WC',
         approved: true,
+        hasReportOnHome: true,
         cargoStatus: '5/5 Giderildi & Kapatıldı ✓',
         homeStatus: 'Çözüldü ✓',
         cargoStepLevel: 5,
@@ -863,8 +892,24 @@
         statusBadge.className = `text-xs font-bold px-3 py-1 rounded-full border flex items-center gap-1.5 ${cfg.statusClass}`;
         statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full ${step === 5 ? 'bg-emerald-500' : 'bg-orange-500 animate-pulse'}"></span> ${cfg.statusText}`;
 
-        // Home card status
-        document.getElementById('homeCardStatusBadge').innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${step === 5 ? 'bg-emerald-500' : 'bg-orange-500 animate-pulse'}"></span> ${cfg.homeStatus}`;
+        // Home Screen Active vs Empty state management
+        const emptyCard = document.getElementById('homeEmptyReportCard');
+        const activeCard = document.getElementById('homeActiveReportCard');
+        const countBadge = document.getElementById('homeReportCountBadge');
+        const trackingDot = document.getElementById('navTrackingDot');
+
+        if (cfg.hasReportOnHome) {
+          emptyCard.classList.add('hidden');
+          activeCard.classList.remove('hidden');
+          countBadge.innerText = "1 Aktif Bildirim";
+          trackingDot.classList.remove('hidden');
+          document.getElementById('homeCardStatusBadge').innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${step === 5 ? 'bg-emerald-500' : 'bg-orange-500 animate-pulse'}"></span> ${cfg.homeStatus}`;
+        } else {
+          emptyCard.classList.remove('hidden');
+          activeCard.classList.add('hidden');
+          countBadge.innerText = "0 Aktif Bildirim";
+          trackingDot.classList.add('hidden');
+        }
 
         // Duplicate badge
         const dupBadge = document.getElementById('duplicateBadge');
@@ -890,10 +935,13 @@
         // Update Timeline Steps
         updateTimelineSteps(cfg.cargoStepLevel, cfg.cargoStatus);
 
-        // Auto view switching for presentation realism:
+        // Natural presentation view transitions:
+        // Step 1: Open chat screen showing welcome greeting and first message exchange
+        // Step 2: In chat, student clarifies location & AI responds
+        // Step 3, 4, 5: Open timeline tracking view
         if (step === 1 || step === 2) {
           setMobileView('chat');
-        } else if (step === 3 || step === 4 || step === 5) {
+        } else if (step >= 3) {
           setMobileView('tracking');
         }
 
@@ -1033,7 +1081,7 @@
       else if (e.key === 'ArrowLeft') prevStep();
     });
 
-    // Boot
+    // Boot: Start cleanly on Home screen or Step 1
     window.onload = () => {
       setStep(1);
     };
