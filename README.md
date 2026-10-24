@@ -7,11 +7,12 @@
 ## 🎯 Projenin Amacı ve Hipotezi
 Geleneksel arıza formları kullanıcının teknik birimi önceden bilmesini bekler. Oysa öğrenci yalnızca gördüğü belirtiyi bilir.
 
-SuFix; Telegram üzerinden gündelik dille (metin, fotoğraf, konum) gelen serbest anlatımları:
-1. **Acil Durum Ön-Filtresi:** Duman, gaz kokusu, yangın gibi durumları sabit kuralla saniyeler içinde yakalayarak doğrudan `KRİTİK` öncelikle işaretler.
-2. **YZ ile Yapılandırılmış İş Emri:** Belirtileri analiz eder, olası kök nedeni çıkarır, doğru birimi ve önceliği güven skoruyla önerir.
-3. **Mükerrer Olay Birleştirme (Dedup):** Aynı odadaki/bölgedeki arızaları tek bir iş emrinde birleştirerek çağrı kirliliğini ve gereksiz personel seferberliğini engeller.
-4. **İnsan Denetimi (Human-in-the-Loop):** Son kararı ve personel atamasını her zaman ilgili yönetici verir.
+SuFix; mobil uygulama üzerinden öğrencilerin gündelik dille yazdığı serbest anlatımları:
+1. **SuFix Mobil & AI Asistanı:** Öğrenci karmaşık formlar doldurmaz; mobil uygulama içi sohbet ekranında gördüğü sorunu yazar. Eksik bilgi varsa asistan yönlendirir.
+2. **Kargo Takip Tarzı Şeffaflık:** Öğrenci arızanın durumunu kargo teslimat süreci gibi adım adım (Bildirim Alındı → YZ Analiz Etti → Birime Atandı → Ekip Sahada → Çözüldü & Kapatıldı) canlı takip eder.
+3. **YZ ile Yapılandırılmış Teşhis:** Belirtileri analiz eder, olası kök nedeni çıkarır, yetkili birimi ve önceliği güven skoruyla önerir.
+4. **Mükerrer Olay Birleştirme (Dedup):** Aynı odadaki/bölgedeki arızaları tek bir iş emrinde birleştirerek çağrı kirliliğini ve gereksiz personel çıkışını %42.8 oranında engeller.
+5. **İnsan Denetimi (Human-in-the-Loop):** Son kararı ve personel atamasını her zaman ilgili yönetici verir.
 
 ---
 
@@ -21,14 +22,14 @@ SuFix; Telegram üzerinden gündelik dille (metin, fotoğraf, konum) gelen serbe
 Hiçbir paket yüklemenize (`pip install`, `npm`) gerek yoktur.
 * `index.html` dosyasına çift tıklayarak doğrudan Chrome veya Edge tarayıcınızda açabilirsiniz.
 * Ya da yerel sunucu ile:
-```bash
+```powershell
 python -m http.server 8000
 ```
 Tarayıcıdan `http://localhost:8000` adresine gidin.
 
 ### Yöntem 2: FastAPI Backend ile Başlatma (Opsiyonel)
 Gerekli paketleri kurup API uçlarını ayağa kaldırabilirsiniz:
-```bash
+```powershell
 pip install -r requirements.txt
 python -m uvicorn app.main:app --reload
 ```
@@ -37,32 +38,24 @@ python -m uvicorn app.main:app --reload
 
 ---
 
-## 🎬 6 Adımlı Sunum & Ekran Görüntüsü Senaryosu (`TODO.md` Bölüm 14)
+## 🎬 6 Adımlı Sunum & Ekran Görüntüsü Senaryosu
 
-Panelin altındaki **Senaryo Kontrol Çubuğu** veya klavyenin **Sağ / Sol Ok Tuşları** ile senaryo adımları arasında kolayca geçiş yapabilir, sunum slaytlarınız için yüksek çözünürlüklü ekran görüntüleri alabilirsiniz:
+Panelin üstündeki **Senaryo Kontrol Çubuğu** veya klavyenin **Sağ / Sol Ok Tuşları** ile senaryo adımları arasında kolayca geçiş yapabilir, sunum slaytlarınız için yüksek çözünürlüklü ekran görüntüleri alabilirsiniz:
 
-1. **Adım 1: Eksik Bilgi Bildirimi:** Öğrenci 1 sadece *"labda net yok"* yazar. Sistem konumun eksik olduğunu fark eder ve örnekli netleştirme sorusu sorar.
-2. **Adım 2: YZ Analizi & Uzmanlık Boşluğu:** Öğrenci *"Mühendislik B blok 204"* yazar. YZ motoru arızayı teşhis eder:
+1. **Adım 1: Eksik Bilgi Bildirimi:** Öğrenci mobil asistan ekranında sadece *"hocam labda net yok makineler açılmıyor ders yapamıyoruz"* yazar. Asistan konumun eksik olduğunu fark eder ve örnekli soru sorar.
+2. **Adım 2: YZ Analizi & Kargo Takip Başlangıcı:** Öğrenci *"Mühendislik B blok 2. kat 204"* yazar. YZ motoru arızayı teşhis eder (`#A102` Takip Kodu üretilir):
    * **Öğrenci Tahmini:** "Elektrik" (Yanılgı!)
-   * **YZ Çıkarımı:** Bilgi İşlem Daire Bşk. (Güven: %82), Neden: Switch/Port Arızası.
-3. **Adım 3: Yönetici Onayı & Atama:** Yönetici kartı inceler, öneriyi onaylar ve saha personeline (Ahmet Yılmaz) iş emri olarak atar. Personel *"Üstlendim"* butonuna basar.
-4. **Adım 4: Mükerrer Olay Birleştirme:** Öğrenci 2 aynı arızayı farklı cümlelerle yazar (*"bilgisayarlar internete bağlanmıyo"*). Sistem bunu açık olan #A102 nolu olayla eşleştirir; bildirim sayısı `2x` olur ve öğrenciye *"Ekibimiz şu anda bu sorun üzerinde çalışıyor"* yanıtı gider.
-5. **Adım 5: Saha Çözümü (Done):** Personel işi bitirip *"Done"* butonuna basar. Her iki öğrenciye de otomatik *"Arıza giderildi"* bildirimi gider.
-6. **Adım 6: Jüri Metrikleri & Kanıt:** Öğrenci yanılgı oranı (%66) ile YZ isabeti (%94.2) arasındaki fark gösterilerek sistemin yarattığı katma değer kanıtlanır.
+   * **YZ Çıkarımı:** Bilgi İşlem Daire Bşk. (Güven: %88), Neden: Switch/Port Arızası.
+   * Öğrenci tek tıkla **"Kargo Takip"** ekranına geçip sürecin 2. adımda olduğunu görür.
+3. **Adım 3: Yönetici Onayı & Atama:** Yönetici kartı inceler, öneriyi onaylar ve saha personeline (Ahmet Yılmaz) iş emri atar. Kargo takip ekranında 3. adım yeşile döner (*"Teknisyene Atandı"*).
+4. **Adım 4: Mükerrer Olay Birleştirme:** 2. öğrenci aynı arızayı yazdığında sistem bunu açık olan #A102 ile eşleştirir; bildirim sayısı `2x` olur ve kargo sürecinde *"Ekip Sahada Müdahale Ediyor"* aşaması görünür.
+5. **Adım 5: Saha Çözümü (Done):** Teknisyen işi bitirdiğinde kargo takip ekranında tüm aşamalar tamamlanır (*"Çözüldü & Kapatıldı"*).
+6. **Adım 6: Jüri Analitiği & Kanıt:** Öğrenci yanılgı oranı (%66) ile YZ isabeti (%94.2) arasındaki fark gösterilerek sistemin yarattığı katma değer kanıtlanır.
 
 ---
 
-## 📂 Dosya Yapısı
-```
-SuFix/
-├── index.html              # Modern, koyu temalı tek parça Dashboard & Telegram Simülatörü
-├── requirements.txt        # FastAPI & Pydantic bağımlılıkları
-├── TODO.md                 # Detaylı proje şartnamesi ve mimari doküman
-├── README.md               # Proje tanıtımı ve çalıştırma kılavuzu
-└── app/
-    ├── main.py             # FastAPI REST servisi ve index.html sunucusu
-    ├── models.py           # Pydantic veri modelleri ve JSON şemaları (Bölüm 8)
-    ├── ai_service.py       # Çok modlu analiz ve aynı olay tespit (dedup) servis katmanı
-    └── emergency_rules.py  # Can güvenliği anahtar kelime kural motoru
-```
-
+## 👥 Ekip Bilgileri (AI-Deathon · ICAAD 26)
+* Ali Kemal Akdeniz
+* Yusufcan Özdemir
+* Emir Eser
+* Dagimawi Moges Wakumo

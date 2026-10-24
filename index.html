@@ -18,12 +18,11 @@
               100: '#ffedd5',
               200: '#fed7aa',
               500: '#f97316',
-              600: '#ea580c', // SuFix Turuncu (Logo rengi)
+              600: '#ea580c', // SuFix Turuncu (Logo)
               700: '#c2410c',
             },
-            navy: {
-              800: '#1e293b',
-              900: '#0f172a',
+            slate: {
+              850: '#151e2e'
             }
           },
           fontFamily: {
@@ -43,18 +42,19 @@
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
-    /* Telegram Chat Bubbles (Light Mode) */
-    .tg-user-bubble {
-      background-color: #dcf8c6;
-      border: 1px solid #c7ebb0;
-      border-radius: 12px 12px 2px 12px;
+    /* Mobile App Chat Bubbles */
+    .app-user-bubble {
+      background-color: #ea580c;
+      color: #ffffff;
+      border-radius: 16px 16px 2px 16px;
     }
-    .tg-bot-bubble {
+    .app-bot-bubble {
       background-color: #ffffff;
+      color: #1e293b;
       border: 1px solid #e2e8f0;
-      border-radius: 12px 12px 12px 2px;
+      border-radius: 16px 16px 16px 2px;
     }
-    /* Stepper Active Button */
+    /* Step Navigation Button Styles */
     .step-btn-active {
       background-color: #ea580c;
       color: #ffffff;
@@ -69,13 +69,26 @@
       background-color: #f1f5f9;
       color: #0f172a;
     }
-    /* Pulse badge */
-    .badge-pulse {
-      animation: pulseAnim 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    /* Cargo timeline vertical line */
+    .cargo-step-done .cargo-icon {
+      background-color: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
     }
-    @keyframes pulseAnim {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.04); }
+    .cargo-step-active .cargo-icon {
+      background-color: #ea580c;
+      color: #ffffff;
+      border-color: #ea580c;
+      animation: pulseGlow 1.8s infinite;
+    }
+    .cargo-step-pending .cargo-icon {
+      background-color: #f1f5f9;
+      color: #94a3b8;
+      border-color: #cbd5e1;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.4); }
+      50% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(234, 88, 12, 0); }
     }
   </style>
 </head>
@@ -87,22 +100,21 @@
       
       <!-- Brand & Event Identity -->
       <div class="flex items-center gap-3.5">
-        <!-- Logo Icon (Turuncu Halka + Tik) -->
-        <div class="w-11 h-11 rounded-2xl bg-orange-600 flex items-center justify-center text-white shadow-md shadow-orange-600/20">
-          <i data-lucide="check" class="w-6 h-6 stroke-[3]"></i>
+        <div class="w-10 h-10 rounded-2xl bg-orange-600 flex items-center justify-center text-white shadow-md shadow-orange-600/20">
+          <i data-lucide="check" class="w-5 h-5 stroke-[3]"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
             <span class="text-2xl font-black tracking-tight text-slate-900">Su<span class="text-orange-600">Fix</span></span>
-            <span class="text-xs px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200 text-orange-700 font-semibold">Kampüs Arıza Asistanı</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200 text-orange-700 font-semibold">Kampüs Asistanı</span>
             <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium hidden sm:inline-block">AI-Deathon · ICAAD 26</span>
           </div>
           <p class="text-xs text-slate-500 mt-0.5">Selçuk Üniversitesi · Alaeddin Keykubat Kampüsü</p>
         </div>
       </div>
 
-      <!-- Ekip Bilgisi (Logo Görselindeki Gerçek Ekip) -->
-      <div class="hidden lg:flex items-center gap-2 text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+      <!-- Ekip Bilgisi (docs/logo.jpeg'deki gerçek ekip) -->
+      <div class="hidden lg:flex items-center gap-2 text-xs text-slate-500 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200">
         <span class="font-semibold text-orange-600">Ekip:</span>
         <span>Ali Kemal Akdeniz</span> • 
         <span>Yusufcan Özdemir</span> • 
@@ -121,13 +133,13 @@
     </div>
   </header>
 
-  <!-- PRESENTATION STEPPER BAR (Jürinin İzleyeceği 6 Adımlı Net Akış) -->
+  <!-- STEPPER BAR (6 Adımlı Net Sunum Yönlendiricisi) -->
   <section id="stepperNav" class="bg-white border-b border-slate-200 py-2.5 px-4 sticky top-[65px] z-30 shadow-xs">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
       
       <!-- Current Step Indicator -->
       <div class="flex items-center gap-2.5 w-full md:w-auto">
-        <span class="w-2.5 h-2.5 rounded-full bg-orange-600 badge-pulse"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-orange-600 animate-pulse"></span>
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Demo Senaryosu:</span>
         <span id="currentStepBadge" class="text-xs font-bold text-slate-900 bg-orange-50 border border-orange-200 px-2.5 py-0.5 rounded-md">
           1. Adım: Eksik Bilgi Bildirimi
@@ -156,66 +168,206 @@
     </div>
   </section>
 
-  <!-- MAIN DEMO VIEW (Sadeleştirilmiş İki Sütunlu Senaryo Alanı) -->
+  <!-- MAIN DEMO VIEW (Sadeleştirilmiş İki Sütunlu Alan) -->
   <main class="max-w-7xl mx-auto w-full p-4 md:p-6 flex-1 flex flex-col gap-6">
 
-    <!-- SCENARIOS 1 to 5: DUAL COLUMN (Left: Telegram, Right: Decision Card) -->
+    <!-- SCENARIOS 1 to 5: DUAL VIEW (Sol: SuFix Mobil Uygulaması, Sağ: Yönetici Paneli) -->
     <div id="dualView" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       
-      <!-- LEFT: REALISTIC TELEGRAM MOBILE CHANNEL (Col 5) -->
+      <!-- LEFT: SUFIX NATIVE MOBILE APP (Col 5) -->
       <section class="lg:col-span-5 flex flex-col items-center">
-        <div class="w-full max-w-[370px] bg-white border border-slate-300 rounded-[36px] shadow-lg shadow-slate-200/60 overflow-hidden flex flex-col h-[640px]">
+        
+        <!-- Phone Device Frame -->
+        <div class="w-full max-w-[365px] bg-slate-900 border-[8px] border-slate-800 rounded-[44px] shadow-2xl overflow-hidden flex flex-col h-[650px] relative">
           
-          <!-- Phone Speaker Notch -->
-          <div class="bg-slate-100 pt-2 pb-1.5 flex justify-center items-center">
-            <div class="w-20 h-3.5 bg-slate-300 rounded-full"></div>
+          <!-- iOS Dynamic Island & Status Bar -->
+          <div class="bg-white px-6 pt-3 pb-2 flex justify-between items-center text-[11px] font-semibold text-slate-800 select-none">
+            <span>09:41</span>
+            <div class="w-20 h-4 bg-black rounded-full flex items-center justify-end px-2">
+              <div class="w-2 h-2 rounded-full bg-slate-800"></div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="wifi" class="w-3.5 h-3.5"></i>
+              <i data-lucide="battery-charging" class="w-3.5 h-3.5"></i>
+            </div>
           </div>
 
-          <!-- Telegram Header -->
-          <div class="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-              <div class="w-9 h-9 rounded-full bg-orange-600 flex items-center justify-center text-white text-xs font-bold shadow-xs">
+          <!-- App Top Header (SuFix Mobil) -->
+          <div class="bg-white border-b border-slate-100 px-4 py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-orange-600 flex items-center justify-center text-white text-xs font-bold shadow-xs">
                 <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
               </div>
               <div>
-                <div class="text-xs font-bold text-slate-900 flex items-center gap-1">
-                  SuFix Kampüs Asistanı
-                  <i data-lucide="badge-check" class="w-3.5 h-3.5 text-blue-500 fill-blue-500"></i>
-                </div>
-                <div class="text-[10px] text-emerald-600 font-medium" id="tgHeaderStatus">bot • çevrimiçi</div>
+                <span class="text-xs font-bold text-slate-900 tracking-tight">Su<span class="text-orange-600">Fix</span> Mobil</span>
+                <span class="block text-[10px] text-slate-400">Selçuk Üniversitesi</span>
               </div>
             </div>
-            
-            <!-- Persona Switcher -->
+
+            <!-- In-App View Toggle (Asistan / Takip) -->
             <div class="flex items-center bg-slate-100 p-0.5 rounded-lg text-[10px] font-semibold text-slate-600">
-              <button onclick="setPersona('student')" id="personaStudentBtn" class="px-2 py-1 rounded bg-white text-orange-600 shadow-xs">Öğrenci</button>
-              <button onclick="setPersona('staff')" id="personaStaffBtn" class="px-2 py-1 rounded text-slate-500 hover:text-slate-900">Teknisyen</button>
+              <button onclick="setMobileView('chat')" id="appNavChatBtn" class="px-2 py-1 rounded bg-white text-orange-600 shadow-xs flex items-center gap-1">
+                <i data-lucide="message-square" class="w-3 h-3"></i> Asistan
+              </button>
+              <button onclick="setMobileView('tracking')" id="appNavTrackingBtn" class="px-2 py-1 rounded text-slate-500 hover:text-slate-900 flex items-center gap-1">
+                <i data-lucide="package" class="w-3 h-3"></i> Takip <span id="trackingBadgeDot" class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+              </button>
             </div>
           </div>
 
-          <!-- Telegram Chat Messages Container -->
-          <div id="chatContainer" class="flex-1 p-3.5 overflow-y-auto space-y-3 bg-[#eef2f6] text-xs">
-            <!-- Messages rendered dynamically -->
+          <!-- APP VIEW 1: ASİSTAN SOHBET EKRANI (Şikayet / Bildirim Chat'i) -->
+          <div id="mobileAppChatView" class="flex-1 flex flex-col bg-[#f8fafc] overflow-hidden">
+            
+            <!-- Quick Helper Pill -->
+            <div class="px-3 py-1.5 bg-orange-50/80 border-b border-orange-100 text-[11px] text-orange-800 flex items-center justify-between">
+              <span class="flex items-center gap-1 font-medium">
+                <i data-lucide="sparkles" class="w-3 h-3 text-orange-600"></i> Doğal dille arıza bildirimi yapabilirsiniz
+              </span>
+              <span class="font-mono text-[10px] text-orange-600 font-bold">Çevrimiçi</span>
+            </div>
+
+            <!-- Chat Messages Container -->
+            <div id="mobileChatContainer" class="flex-1 p-3 overflow-y-auto space-y-3 text-xs">
+              <!-- Rendered via JavaScript -->
+            </div>
+
+            <!-- Chat Input Box -->
+            <div class="bg-white border-t border-slate-200 p-2.5 flex items-center gap-2">
+              <div class="flex-1 bg-slate-100 rounded-full px-3.5 py-1.5 text-xs text-slate-400 flex items-center justify-between">
+                <span id="chatPlaceholder">Arızayı kısaca anlatın...</span>
+                <i data-lucide="camera" class="w-3.5 h-3.5 text-slate-400"></i>
+              </div>
+              <button onclick="nextStep()" class="w-7 h-7 rounded-full bg-orange-600 flex items-center justify-center text-white hover:bg-orange-700 transition shadow-xs" title="Senaryoyu İlerlet">
+                <i data-lucide="send" class="w-3 h-3"></i>
+              </button>
+            </div>
+
           </div>
 
-          <!-- Telegram Input Simulator -->
-          <div class="bg-white border-t border-slate-200 p-2.5 flex items-center gap-2">
-            <div class="flex-1 bg-slate-100 rounded-full px-3.5 py-2 text-xs text-slate-400 flex items-center justify-between">
-              <span id="chatInputPlaceholder">Mesajınızı yazın...</span>
-              <i data-lucide="paperclip" class="w-3.5 h-3.5 text-slate-400"></i>
+          <!-- APP VIEW 2: KARGO TAKİP SÜRECİ EKRANI (Geçmiş Şikayetler & Durum Akışı) -->
+          <div id="mobileAppTrackingView" class="hidden flex-1 bg-white overflow-y-auto p-4 flex flex-col gap-4">
+            
+            <!-- Active Shipment Card Header -->
+            <div class="p-3.5 rounded-2xl bg-gradient-to-br from-orange-50 via-white to-slate-50 border border-orange-200">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-[11px] font-bold text-orange-700 uppercase tracking-wide">Arıza Takip Kodu</span>
+                <span class="font-mono font-bold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200">#A102</span>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm mt-1.5">Mühendislik B Blok 204 Ağ Arızası</h4>
+              <p class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1">
+                <i data-lucide="map-pin" class="w-3 h-3 text-orange-600"></i> Mühendislik Fakültesi Kat 2 Lab 204
+              </p>
+
+              <!-- Live Status Bar -->
+              <div class="mt-3 pt-2.5 border-t border-orange-200/60 flex items-center justify-between text-xs">
+                <span class="text-slate-500">Mevcut Durum:</span>
+                <span id="cargoStatusText" class="font-bold text-orange-700 flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span> Ekip Sahada (İşlemde)
+                </span>
+              </div>
             </div>
-            <button onclick="nextStep()" class="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-white hover:bg-orange-700 transition shadow-xs" title="Sonraki Adımı Tetikle">
-              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+
+            <!-- CARGO-STYLE VERTICAL STEPPER TIMELINE -->
+            <div class="flex-1 py-1">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-3">Müdahale Aşamaları</span>
+
+              <div class="relative pl-7 space-y-5">
+                <!-- Vertical Progress Line -->
+                <div class="absolute left-3 top-2 bottom-3 w-0.5 bg-slate-200 -z-0"></div>
+
+                <!-- Step 1: Bildirim Alındı -->
+                <div class="relative flex items-start cargo-step-done" id="cargoStep1">
+                  <div class="absolute -left-7 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold cargo-icon shadow-xs">
+                    <i data-lucide="check" class="w-3 h-3"></i>
+                  </div>
+                  <div>
+                    <h5 class="text-xs font-bold text-slate-900">1. Bildirim Alındı</h5>
+                    <p class="text-[11px] text-slate-500">Öğrenci talebi sisteme işlendi (13:14)</p>
+                  </div>
+                </div>
+
+                <!-- Step 2: YZ Analizi & Kök Neden -->
+                <div class="relative flex items-start cargo-step-done" id="cargoStep2">
+                  <div class="absolute -left-7 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold cargo-icon shadow-xs">
+                    <i data-lucide="check" class="w-3 h-3"></i>
+                  </div>
+                  <div>
+                    <h5 class="text-xs font-bold text-slate-900">2. YZ Analiz Edildi</h5>
+                    <p class="text-[11px] text-slate-500">Bilgi İşlem / Switch arızası teşhis edildi (13:15)</p>
+                  </div>
+                </div>
+
+                <!-- Step 3: Yönetici Onayı & Personele Atama -->
+                <div class="relative flex items-start cargo-step-active" id="cargoStep3">
+                  <div class="absolute -left-7 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold cargo-icon shadow-xs">
+                    <i data-lucide="user-check" class="w-3 h-3"></i>
+                  </div>
+                  <div>
+                    <h5 class="text-xs font-bold text-slate-900">3. Birime Atandı</h5>
+                    <p class="text-[11px] text-slate-500">Ahmet Yılmaz (Ağ Teknisyeni) görevlendirildi (13:17)</p>
+                  </div>
+                </div>
+
+                <!-- Step 4: Saha Müdahalesi (İşlemde) -->
+                <div class="relative flex items-start cargo-step-pending" id="cargoStep4">
+                  <div class="absolute -left-7 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold cargo-icon shadow-xs">
+                    <i data-lucide="wrench" class="w-3 h-3"></i>
+                  </div>
+                  <div>
+                    <h5 class="text-xs font-bold text-slate-900">4. Ekip Sahada</h5>
+                    <p class="text-[11px] text-slate-500">Odadaki anahtar switch kontrol ediliyor</p>
+                  </div>
+                </div>
+
+                <!-- Step 5: Çözüldü & Kapatıldı -->
+                <div class="relative flex items-start cargo-step-pending" id="cargoStep5">
+                  <div class="absolute -left-7 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold cargo-icon shadow-xs">
+                    <i data-lucide="check-circle-2" class="w-3 h-3"></i>
+                  </div>
+                  <div>
+                    <h5 class="text-xs font-bold text-slate-900">5. Çözüldü & Tamamlandı</h5>
+                    <p class="text-[11px] text-slate-500">İnternet erişimi sağlandı, arıza kapatıldı</p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Technician Card Note -->
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+              <span class="text-slate-500 block text-[10px] font-semibold uppercase">Görevli Saha Personeli:</span>
+              <div class="flex items-center justify-between mt-1">
+                <span class="font-bold text-slate-800">Ahmet Yılmaz (Bilgi İşlem)</span>
+                <span class="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-semibold">Görevde</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- App Bottom Navigation Bar -->
+          <div class="bg-white border-t border-slate-200 px-6 py-2 flex items-center justify-around text-slate-400">
+            <button onclick="setMobileView('chat')" id="appBottomChatBtn" class="flex flex-col items-center text-orange-600 font-semibold">
+              <i data-lucide="message-square" class="w-4 h-4"></i>
+              <span class="text-[10px] mt-0.5">Asistan</span>
             </button>
+            <button onclick="setMobileView('tracking')" id="appBottomTrackingBtn" class="flex flex-col items-center hover:text-slate-700 relative">
+              <i data-lucide="package" class="w-4 h-4"></i>
+              <span class="text-[10px] mt-0.5">Kargo Takip</span>
+              <span class="w-2 h-2 rounded-full bg-orange-600 absolute -top-0.5 right-2"></span>
+            </button>
+            <div class="flex flex-col items-center opacity-40">
+              <i data-lucide="user" class="w-4 h-4"></i>
+              <span class="text-[10px] mt-0.5">Profil</span>
+            </div>
           </div>
 
-          <!-- Phone Home Indicator -->
+          <!-- Phone Home Indicator Bar -->
           <div class="bg-white py-1 flex justify-center">
             <div class="w-24 h-1 bg-slate-300 rounded-full"></div>
           </div>
 
         </div>
-        <span class="text-[11px] text-slate-400 mt-2">Öğrencinin kullandığı Telegram Bot ekranı</span>
+        <span class="text-[11px] text-slate-400 mt-2">Öğrencinin kullandığı SuFix Mobil Uygulaması</span>
       </section>
 
       <!-- RIGHT: FOCUSED EXECUTIVE DECISION PANEL (Col 7) -->
@@ -244,21 +396,21 @@
             </div>
           </div>
 
-          <!-- The Core Thesis: "Öğrencinin Gündelik Dili" vs "YZ Yapılandırılmış Çıkarımı" -->
+          <!-- Before / After Grid: Öğrenci İfadesi vs YZ Teşhisi -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             
-            <!-- Before: Öğrencinin Ham Anlatımı -->
+            <!-- Before: Öğrencinin Doğal Dili -->
             <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
               <div>
                 <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wide flex items-center gap-1 mb-2">
                   <i data-lucide="message-square" class="w-3.5 h-3.5 text-slate-400"></i> Öğrencinin Orijinal İfadesi
                 </span>
                 <p id="studentSpeechText" class="text-sm font-medium text-slate-800 italic leading-relaxed">
-                  "labda net yok makineler açılmıyor"
+                  "labda net yok makineler açılmıyor ders yapamıyoruz"
                 </p>
               </div>
 
-              <!-- Öğrenci Yanılgısı (Uzmanlık Boşluğu Kanıtı) -->
+              <!-- Öğrenci Form Yanılgısı (Uzmanlık Boşluğu Kanıtı) -->
               <div class="mt-4 pt-3 border-t border-slate-200/80">
                 <div class="flex items-center justify-between text-xs">
                   <span class="text-slate-500">Öğrenci Kategori Tahmini:</span>
@@ -327,11 +479,11 @@
               </div>
             </div>
 
-            <!-- Assigned Staff Info Bar (Shown when approved) -->
+            <!-- Assigned Staff Info Bar -->
             <div id="assignedStaffInfo" class="hidden mt-3 pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-700">
               <span class="flex items-center gap-1.5 font-medium">
                 <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
-                Görevli Teknisyen: <strong class="text-slate-900">Ahmet Yılmaz (Ağ Teknisyeni)</strong>
+                Görevlendirilen Teknisyen: <strong class="text-slate-900">Ahmet Yılmaz (Ağ Teknisyeni)</strong>
               </span>
               <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px] font-semibold">
                 Saha İş Emri İletildi ✓
@@ -343,7 +495,7 @@
           <div class="bg-white border-l-4 border-orange-600 p-3.5 rounded-r-xl shadow-xs text-xs">
             <span class="font-bold text-slate-900 block mb-0.5" id="juryFocusTitle">Jüriye Gösterilen Katma Değer:</span>
             <p class="text-slate-600 leading-relaxed" id="juryFocusText">
-              Öğrenci konum belirtmediğinde sistem formu reddetmez; gündelik dille eksik olanı örnekleyerek sorar ve veriyi tamamlar.
+              Öğrenci konum belirtmediğinde sistem formu reddetmez; asistan gündelik dille eksik olanı örnekleyerek sorar ve veriyi tamamlar.
             </p>
           </div>
 
@@ -446,49 +598,37 @@
   <!-- JAVASCRIPT STATE CONTROLLER -->
   <script>
     let currentStep = 1;
-    let activePersona = 'student'; // 'student' or 'staff'
+    let activeMobileView = 'chat'; // 'chat' or 'tracking'
     let isCleanMode = false;
 
-    // Realistic Telegram Dialogues for Each Scenario Step
-    const studentDialogues = {
+    // Realistic In-App Chat Dialogues for Each Scenario Step
+    const chatDialogues = {
       step1: [
         { sender: 'user', text: 'hocam labda net yok makineler açılmıyor ders yapamıyoruz', time: '13:14' },
-        { sender: 'bot', text: '📍 Merhaba! Arızanın tam olarak nerede olduğunu anlayamadım.<br><br>Ekiplerimizin hemen müdahale edebilmesi için <b>fakülte, blok ve oda numarasını</b> yazar mısın?<br><br><i>Örnek: Mühendislik B Blok 2. kat 204 nolu lab</i>', time: '13:14' }
+        { sender: 'bot', text: '📍 Merhaba! Arızanın nerede olduğunu tam anlayamadım.<br><br>Ekiplerimizin hemen müdahale edebilmesi için <b>fakülte, blok ve oda numarasını</b> yazabilir misiniz?<br><br><i>Örnek: Mühendislik B Blok 2. kat 204 nolu lab</i>', time: '13:14' }
       ],
       step2: [
         { sender: 'user', text: 'hocam labda net yok makineler açılmıyor ders yapamıyoruz', time: '13:14' },
-        { sender: 'bot', text: '📍 Merhaba! Arızanın tam olarak nerede olduğunu anlayamadım.<br><br>Ekiplerimizin hemen müdahale edebilmesi için <b>fakülte, blok ve oda numarasını</b> yazar mısın?<br><br><i>Örnek: Mühendislik B Blok 2. kat 204 nolu lab</i>', time: '13:14' },
-        { sender: 'user', text: 'Mühendislik B blok 2. kat 204 labındayız, telefondan eduroama girebiliyorum ama pc kablolarında internet yok', time: '13:15' },
-        { sender: 'bot', text: '✅ Teşekkürler! Bildiriminiz alındı. <b>Takip No: #A102</b><br><br>🤖 <b>YZ Teşhisi:</b> Sorununuz <i>Bilgi İşlem Daire Başkanlığı</i> yetki alanında değerlendirildi ve yönetici onayına sunuldu. Gelişmelerden sizi haberdar edeceğiz.', time: '13:15' }
+        { sender: 'bot', text: '📍 Merhaba! Arızanın nerede olduğunu tam anlayamadım.<br><br>Ekiplerimizin hemen müdahale edebilmesi için <b>fakülte, blok ve oda numarasını</b> yazabilir misiniz?<br><br><i>Örnek: Mühendislik B Blok 2. kat 204 nolu lab</i>', time: '13:14' },
+        { sender: 'user', text: 'Mühendislik B blok 2. kat 204 labındayız, telefondan eduroama bağlanabiliyorum ama pc kablolarında internet yok', time: '13:15' },
+        { sender: 'bot', text: '✅ Teşekkürler! Arıza kaydınız oluşturuldu.<br><b>Takip No: #A102</b><br><br>🤖 <b>YZ Teşhisi:</b> Sorununuz <i>Bilgi İşlem Daire Başkanlığı</i> yetki alanında değerlendirildi ve yönetici onayına sunuldu.<br><br><button onclick="setMobileView(\'tracking\')" class="mt-1 px-3 py-1.5 bg-orange-600 text-white rounded-lg text-[11px] font-bold flex items-center gap-1 shadow-xs">📦 Kargo Tarzı Takip Et (#A102)</button>', time: '13:15' }
       ],
       step3: [
         { sender: 'user', text: 'Mühendislik B blok 2. kat 204 labındayız...', time: '13:15' },
-        { sender: 'bot', text: '✅ Bildiriminiz alındı. Takip No: <b>#A102</b>', time: '13:15' },
-        { sender: 'bot', text: '👨‍💼 <b>Durum Güncellemesi (#A102):</b> Talebiniz yönetici tarafından onaylandı ve yetkili personele (<b>Ahmet Yılmaz - Ağ Teknisyeni</b>) iletildi. Ekip görevi üstlendi.', time: '13:17' }
+        { sender: 'bot', text: '✅ Arıza kaydınız oluşturuldu. <b>#A102</b>', time: '13:15' },
+        { sender: 'bot', text: '👨‍💼 <b>Durum Güncellemesi (#A102):</b> Talebiniz onaylandı ve <b>Ahmet Yılmaz (Ağ Teknisyeni)</b> görevlendirildi. Teknisyen arıza mahalline hareket etti.<br><br><button onclick="setMobileView(\'tracking\')" class="mt-1 px-3 py-1.5 bg-slate-800 text-white rounded-lg text-[11px] font-bold flex items-center gap-1">📦 Canlı Durumu Görüntüle</button>', time: '13:17' }
       ],
       step4: [
         // Duplicate report from Student 2
         { sender: 'user2', text: 'b blok 204 labda kablolu internet gitmiş hiçbir bilgisayar bağlanmıyor', time: '13:19' },
-        { sender: 'bot', text: 'ℹ️ <b>Mevcut İş Emri Bulundu (#A102):</b><br>Bildirdiğiniz arıza için teknik ekibimiz şu anda sahada müdahale etmektedir.<br><br>Aynı arıza için sizi de bildirim listesine ekledik. Sorun çözüldüğünde size de mesaj gelecektir. Teşekkür ederiz!', time: '13:19' }
+        { sender: 'bot', text: 'ℹ️ <b>Mevcut İşlem Tespit Edildi (#A102):</b><br>Bildirdiğiniz arıza için teknik ekibimiz şu anda sahada müdahale etmektedir.<br><br>Aynı arıza için sizi de bildirim listesine ekledik. Sorun giderildiğinde size de anında bildirim iletilecektir.<br><br><button onclick="setMobileView(\'tracking\')" class="mt-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-[11px] font-bold flex items-center gap-1">📦 Arıza Sürecini İzle</button>', time: '13:19' }
       ],
       step5: [
-        { sender: 'bot', text: '🎉 <b>Arıza Giderildi! (#A102)</b><br><br>Mühendislik B Blok 204 labındaki kablolu internet erişim sorunu çözülmüştür.<br><br><i>Teknisyen Notu:</i> "Odadaki anahtar switch portu resetlendi, kablo hattı test edildi. Tüm terminaller hatta bağlandı."', time: '13:28' }
+        { sender: 'bot', text: '🎉 <b>Arızanız Giderildi! (#A102)</b><br><br>Mühendislik B Blok 204 labındaki kablolu internet erişim sorunu başarıyla çözüldü.<br><br><i>Teknisyen Kapanış Notu:</i> "Odadaki kenar switch portu yeniden başlatıldı ve hat testleri tamamlandı. İyi dersler!"<br><br><button onclick="setMobileView(\'tracking\')" class="mt-1 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-[11px] font-bold flex items-center gap-1">✓ Teslim Raporunu İncele</button>', time: '13:28' }
       ]
     };
 
-    const staffDialogues = {
-      step3: [
-        { sender: 'bot', text: '🚨 <b>YENİ İŞ EMRİ ATANDI (#A102)</b><br><br><b>Konum:</b> Mühendislik B Blok Kat 2 Lab 204<br><b>Arıza:</b> Kablolu LAN port erişim sorunu<br><b>Öncelik:</b> YÜKSEK<br><b>YZ Notu:</b> Omurga faal, switch resetlenmeli.', time: '13:17', hasAction: true }
-      ],
-      step4: [
-        { sender: 'bot', text: '🚨 <b>İŞ EMRİ (#A102)</b><br>Konum: Müh B-204 (İşlemde)<br><br>⚠️ <b>Ek Bildirim:</b> 1 öğrenci daha aynı arızayı bildirdi (Toplam 2 bildiren).', time: '13:20' }
-      ],
-      step5: [
-        { sender: 'bot', text: '✅ <b>İşlem Kapatıldı:</b> #A102 nolu arıza başarıyla tamamlandı olarak işaretlendi.', time: '13:28' }
-      ]
-    };
-
-    // Step Explanations and Data for the Right Panel
+    // Configuration per Step for Right Panel & Cargo Status
     const stepConfigs = {
       1: {
         badge: '1. Adım: Eksik Bilgi Bildirimi',
@@ -496,12 +636,14 @@
         statusText: 'Eksik Bilgi Bekleniyor',
         statusClass: 'bg-amber-50 text-amber-700 border-amber-200',
         duplicate: false,
-        rawSpeech: '“labda net yok makineler açılmıyor”',
+        rawSpeech: '“labda net yok makineler açılmıyor ders yapamıyoruz”',
         studentGuess: 'Elektrik (Hatalı)',
         location: 'Konum Henüz Belirsiz...',
         approved: false,
+        cargoStatus: '1/5 Bildirim Alındı (Konum Bekleniyor)',
+        cargoStepLevel: 1,
         juryTitle: '1. Adım Katma Değeri — Akıllı Eksik Bilgi Tamamlama:',
-        juryText: 'Öğrenci konum yazmadığında geleneksel formlar hata verir veya formu çöpe atar. SuFix gündelik dille eksik olanı tespit edip kibarca örnek vererek öğrenciyi yönlendirir.'
+        juryText: 'Öğrenci konum yazmadığında klasik formlar hata verir. SuFix sohbet arayüzü gündelik dille eksik olanı tespit edip kibarca örnek vererek öğrenciyi yönlendirir.'
       },
       2: {
         badge: '2. Adım: YZ Analizi & Kök Neden Teşhisi',
@@ -509,10 +651,12 @@
         statusText: 'Yönetici Onayı Bekliyor',
         statusClass: 'bg-orange-50 text-orange-700 border-orange-200',
         duplicate: false,
-        rawSpeech: '“Mühendislik B blok 2. kat 204 labındayız, telefondan eduroama girebiliyorum ama pc kablolarında internet yok”',
+        rawSpeech: '“Mühendislik B blok 2. kat 204 labındayız, telefondan eduroama bağlanabiliyorum ama pc kablolarında internet yok”',
         studentGuess: 'Elektrik (Hatalı)',
         location: 'Mühendislik B Blok · Kat 2 · Lab 204',
         approved: false,
+        cargoStatus: '2/5 YZ Analiz Etti (Yönetici Onayında)',
+        cargoStepLevel: 2,
         juryTitle: '2. Adım Katma Değeri — Uzmanlık Boşluğunun Çözülmesi:',
         juryText: 'Öğrenci bilgisayarlar açılmadığı için "Elektrik" zannetmişti. YZ, telefonun Wi-Fi çektiğini anlayarak ana şebekeyi değil, odadaki switch port arızasını tespit edip Bilgi İşlem\'e yönlendirdi.'
       },
@@ -526,8 +670,10 @@
         studentGuess: 'Elektrik (Düzeltildi)',
         location: 'Mühendislik B Blok · Kat 2 · Lab 204',
         approved: true,
+        cargoStatus: '3/5 Teknisyene Atandı (Ahmet Yılmaz Yolda)',
+        cargoStepLevel: 3,
         juryTitle: '3. Adım Katma Değeri — İnsan Denetimi (Human-in-the-Loop):',
-        juryText: 'YZ son kararı vermez; önerir. Yönetici öneriyi tek tıkla doğrular ve saha personeline Telegram üzerinden anlık iş emri fırlatılır.'
+        juryText: 'YZ son kararı vermez; önerir. Yönetici öneriyi tek tıkla doğrular ve saha personeline anlık iş emri iletilir.'
       },
       4: {
         badge: '4. Adım: Mükerrer Bildirim Tespiti & Konsolidasyon',
@@ -539,6 +685,8 @@
         studentGuess: 'Aynı Olayla Eşleşti',
         location: 'Mühendislik B Blok · Kat 2 · Lab 204',
         approved: true,
+        cargoStatus: '4/5 Ekip Sahada Müdahale Ediyor (2x Bildirim)',
+        cargoStepLevel: 4,
         juryTitle: '4. Adım Katma Değeri — Gereksiz Çağrı ve Seferberlik Tasarrufu (%42.8):',
         juryText: 'Aynı arıza ikinci bir öğrenci tarafından yazıldığında yeni iş emri açılmaz; açık olan #A102 ile birleştirilir ve öğrenciye "Ekibimiz zaten çalışıyor" yanıtı verilerek santral kilitlenmesi önlenir.'
       },
@@ -552,8 +700,10 @@
         studentGuess: 'Başarıyla Kapatıldı',
         location: 'Mühendislik B Blok · Kat 2 · Lab 204',
         approved: true,
-        juryTitle: '5. Adım Katma Değeri — Şeffaf Süreç ve Geri Bildirim:',
-        juryText: 'Teknisyen işi kapattığı anda, bu arızaya bağlı olan 1. ve 2. öğrencinin cebine aynı anda çözüm bildirimi gider. Öğrenci sürecin sonucunu öğrenir.'
+        cargoStatus: '5/5 Çözüldü & Teslim Edildi ✓',
+        cargoStepLevel: 5,
+        juryTitle: '5. Adım Katma Değeri — Şeffaf Süreç ve Kargo Takip Deneyimi:',
+        juryText: 'Teknisyen işi kapattığı anda, kargo takip süreci "Teslim Edildi"ye döner ve tüm bildiren öğrencilerin telefonuna eş zamanlı çözüm bildirimi gider.'
       }
     };
 
@@ -612,28 +762,34 @@
           staffInfo.classList.add('hidden');
         }
 
-        renderTelegram();
+        // Cargo View Step Update
+        updateCargoTimeline(cfg.cargoStepLevel, cfg.cargoStatus);
+
+        // Auto-switch mobile view naturally:
+        // Steps 1 & 2: Chat active
+        // Steps 3, 4, 5: You can view either, but we default to tracking or chat depending on flow
+        if (step >= 3 && activeMobileView === 'tracking') {
+          setMobileView('tracking');
+        } else {
+          setMobileView(activeMobileView);
+        }
+
+        renderMobileChat();
       }
 
       lucide.createIcons();
     }
 
-    function renderTelegram() {
-      const container = document.getElementById('chatContainer');
+    function renderMobileChat() {
+      const container = document.getElementById('mobileChatContainer');
       container.innerHTML = '';
 
       let msgs = [];
-      if (activePersona === 'student') {
-        if (currentStep === 1) msgs = studentDialogues.step1;
-        else if (currentStep === 2) msgs = studentDialogues.step2;
-        else if (currentStep === 3) msgs = studentDialogues.step3;
-        else if (currentStep === 4) msgs = studentDialogues.step4;
-        else msgs = studentDialogues.step5;
-      } else {
-        if (currentStep <= 3) msgs = staffDialogues.step3;
-        else if (currentStep === 4) msgs = staffDialogues.step4;
-        else msgs = staffDialogues.step5;
-      }
+      if (currentStep === 1) msgs = chatDialogues.step1;
+      else if (currentStep === 2) msgs = chatDialogues.step2;
+      else if (currentStep === 3) msgs = chatDialogues.step3;
+      else if (currentStep === 4) msgs = chatDialogues.step4;
+      else msgs = chatDialogues.step5;
 
       msgs.forEach(m => {
         const isUser = m.sender === 'user' || m.sender === 'user2';
@@ -644,22 +800,16 @@
         if (m.sender === 'user2') {
           senderTag = `<span class="text-[9px] font-bold text-blue-600 mb-0.5">2. Öğrenci (Aynı Arıza)</span>`;
         } else if (m.sender === 'user') {
-          senderTag = `<span class="text-[9px] font-bold text-slate-500 mb-0.5">Öğrenci 1</span>`;
-        }
-
-        let actionBtn = '';
-        if (m.hasAction) {
-          actionBtn = `<div class="mt-2.5 pt-2 border-t border-slate-100 flex justify-end">
-            <button onclick="setStep(4)" class="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-[11px] font-bold shadow-xs">✋ Üstlendim</button>
-          </div>`;
+          senderTag = `<span class="text-[9px] font-bold text-slate-400 mb-0.5">Siz</span>`;
+        } else {
+          senderTag = `<span class="text-[9px] font-bold text-orange-600 mb-0.5 flex items-center gap-1"><i data-lucide="sparkles" class="w-2.5 h-2.5"></i> SuFix Asistan</span>`;
         }
 
         div.innerHTML = `
           ${senderTag}
-          <div class="${isUser ? 'tg-user-bubble text-slate-900' : 'tg-bot-bubble text-slate-800'} p-3 shadow-xs leading-relaxed text-[11.5px]">
+          <div class="${isUser ? 'app-user-bubble' : 'app-bot-bubble'} p-3 shadow-xs leading-relaxed text-[11.5px]">
             ${m.text}
-            ${actionBtn}
-            <div class="text-[9px] ${isUser ? 'text-emerald-700' : 'text-slate-400'} text-right mt-1 font-mono">${m.time} ✓✓</div>
+            <div class="text-[9px] ${isUser ? 'text-orange-200' : 'text-slate-400'} text-right mt-1 font-mono">${m.time}</div>
           </div>
         `;
         container.appendChild(div);
@@ -668,26 +818,54 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    function approveIncidentAction() {
-      setStep(3);
+    function updateCargoTimeline(level, statusSummary) {
+      document.getElementById('cargoStatusText').innerText = statusSummary;
+
+      for (let i = 1; i <= 5; i++) {
+        const stepEl = document.getElementById(`cargoStep${i}`);
+        if (i < level) {
+          stepEl.className = "relative flex items-start cargo-step-done";
+        } else if (i === level) {
+          stepEl.className = "relative flex items-start cargo-step-active";
+        } else {
+          stepEl.className = "relative flex items-start cargo-step-pending";
+        }
+      }
     }
 
-    function setPersona(p) {
-      activePersona = p;
-      const sBtn = document.getElementById('personaStudentBtn');
-      const staffBtn = document.getElementById('personaStaffBtn');
+    function setMobileView(view) {
+      activeMobileView = view;
+      const chatView = document.getElementById('mobileAppChatView');
+      const trackingView = document.getElementById('mobileAppTrackingView');
+      
+      const navChat = document.getElementById('appNavChatBtn');
+      const navTracking = document.getElementById('appNavTrackingBtn');
+      const btmChat = document.getElementById('appBottomChatBtn');
+      const btmTracking = document.getElementById('appBottomTrackingBtn');
 
-      if (p === 'student') {
-        sBtn.className = "px-2 py-1 rounded bg-white text-orange-600 shadow-xs";
-        staffBtn.className = "px-2 py-1 rounded text-slate-500 hover:text-slate-900";
-        document.getElementById('tgHeaderStatus').innerText = "bot • çevrimiçi";
+      if (view === 'chat') {
+        chatView.classList.remove('hidden');
+        trackingView.classList.add('hidden');
+
+        navChat.className = "px-2 py-1 rounded bg-white text-orange-600 shadow-xs flex items-center gap-1";
+        navTracking.className = "px-2 py-1 rounded text-slate-500 hover:text-slate-900 flex items-center gap-1";
+        btmChat.className = "flex flex-col items-center text-orange-600 font-semibold";
+        btmTracking.className = "flex flex-col items-center text-slate-400 hover:text-slate-700 relative";
       } else {
-        staffBtn.className = "px-2 py-1 rounded bg-white text-orange-600 shadow-xs";
-        sBtn.className = "px-2 py-1 rounded text-slate-500 hover:text-slate-900";
-        document.getElementById('tgHeaderStatus').innerText = "teknisyen kanalı";
+        chatView.classList.add('hidden');
+        trackingView.classList.remove('hidden');
+
+        navTracking.className = "px-2 py-1 rounded bg-white text-orange-600 shadow-xs flex items-center gap-1";
+        navChat.className = "px-2 py-1 rounded text-slate-500 hover:text-slate-900 flex items-center gap-1";
+        btmTracking.className = "flex flex-col items-center text-orange-600 font-semibold relative";
+        btmChat.className = "flex flex-col items-center text-slate-400 hover:text-slate-700";
       }
-      renderTelegram();
+
       lucide.createIcons();
+    }
+
+    function approveIncidentAction() {
+      setStep(3);
     }
 
     function nextStep() {
@@ -714,7 +892,7 @@
       }
     }
 
-    // Keyboard navigation (Left / Right arrow keys for seamless presentation)
+    // Keyboard navigation (Left / Right arrow keys)
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight') nextStep();
       else if (e.key === 'ArrowLeft') prevStep();
