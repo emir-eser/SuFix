@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SuFix — Kampüs Arıza & Operasyon Asistanı | Demo Paneli</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              200: '#fed7aa',
+              500: '#f97316',
+              600: '#ea580c', // SuFix Turuncu (Logo rengi)
+              700: '#c2410c',
+            },
+            navy: {
+              800: '#1e293b',
+              900: '#0f172a',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Telegram Chat Bubbles (Light Mode) */
+    .tg-user-bubble {
+      background-color: #dcf8c6;
+      border: 1px solid #c7ebb0;
+      border-radius: 12px 12px 2px 12px;
+    }
+    .tg-bot-bubble {
+      background-color: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px 12px 12px 2px;
+    }
+    /* Stepper Active Button */
+    .step-btn-active {
+      background-color: #ea580c;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+    }
+    .step-btn-inactive {
+      background-color: #ffffff;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+    }
+    .step-btn-inactive:hover {
+      background-color: #f1f5f9;
+      color: #0f172a;
+    }
+    /* Pulse badge */
+    .badge-pulse {
+      animation: pulseAnim 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.04); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-orange-500 selection:text-white">
+
+  <!-- TOP HEADER (Temiz, Beyaz & Turuncu Kurumsal Başlık) -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-5 py-3 shadow-xs">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      
+      <!-- Brand & Event Identity -->
+      <div class="flex items-center gap-3.5">
+        <!-- Logo Icon (Turuncu Halka + Tik) -->
+        <div class="w-11 h-11 rounded-2xl bg-orange-600 flex items-center justify-center text-white shadow-md shadow-orange-600/20">
+          <i data-lucide="check" class="w-6 h-6 stroke-[3]"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl font-black tracking-tight text-slate-900">Su<span class="text-orange-600">Fix</span></span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200 text-orange-700 font-semibold">Kampüs Arıza Asistanı</span>
+            <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium hidden sm:inline-block">AI-Deathon · ICAAD 26</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">Selçuk Üniversitesi · Alaeddin Keykubat Kampüsü</p>
+        </div>
+      </div>
+
+      <!-- Ekip Bilgisi (Logo Görselindeki Gerçek Ekip) -->
+      <div class="hidden lg:flex items-center gap-2 text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+        <span class="font-semibold text-orange-600">Ekip:</span>
+        <span>Ali Kemal Akdeniz</span> • 
+        <span>Yusufcan Özdemir</span> • 
+        <span>Emir Eser</span> • 
+        <span>Dagimawi Moges Wakumo</span>
+      </div>
+
+      <!-- Presentation View Controls -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleCleanMode()" title="Slayt için temiz ekran" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 flex items-center gap-1.5 transition">
+          <i data-lucide="camera" class="w-4 h-4 text-orange-600"></i>
+          <span class="hidden sm:inline">Slayt Çekim Modu</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- PRESENTATION STEPPER BAR (Jürinin İzleyeceği 6 Adımlı Net Akış) -->
+  <section id="stepperNav" class="bg-white border-b border-slate-200 py-2.5 px-4 sticky top-[65px] z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+      
+      <!-- Current Step Indicator -->
+      <div class="flex items-center gap-2.5 w-full md:w-auto">
+        <span class="w-2.5 h-2.5 rounded-full bg-orange-600 badge-pulse"></span>
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Demo Senaryosu:</span>
+        <span id="currentStepBadge" class="text-xs font-bold text-slate-900 bg-orange-50 border border-orange-200 px-2.5 py-0.5 rounded-md">
+          1. Adım: Eksik Bilgi Bildirimi
+        </span>
+      </div>
+
+      <!-- Step Navigation Buttons -->
+      <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto justify-start md:justify-end pb-1 md:pb-0 text-xs font-medium">
+        <button onclick="setStep(1)" id="stepBtn1" class="px-3 py-1.5 rounded-lg transition step-btn-active">1. Bildirim</button>
+        <button onclick="setStep(2)" id="stepBtn2" class="px-3 py-1.5 rounded-lg transition step-btn-inactive">2. YZ Analizi</button>
+        <button onclick="setStep(3)" id="stepBtn3" class="px-3 py-1.5 rounded-lg transition step-btn-inactive">3. Yönetici Onayı</button>
+        <button onclick="setStep(4)" id="stepBtn4" class="px-3 py-1.5 rounded-lg transition step-btn-inactive">4. Mükerrer (2x)</button>
+        <button onclick="setStep(5)" id="stepBtn5" class="px-3 py-1.5 rounded-lg transition step-btn-inactive">5. Çözüldü</button>
+        <button onclick="setStep(6)" id="stepBtn6" class="px-3 py-1.5 rounded-lg transition step-btn-inactive">6. Jüri Analitiği</button>
+
+        <div class="h-4 w-px bg-slate-300 mx-1"></div>
+
+        <button onclick="prevStep()" class="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 transition" title="Önceki Adım (Sol Ok)">
+          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
+        <button onclick="nextStep()" class="p-1.5 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition" title="Sonraki Adım (Sağ Ok)">
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MAIN DEMO VIEW (Sadeleştirilmiş İki Sütunlu Senaryo Alanı) -->
+  <main class="max-w-7xl mx-auto w-full p-4 md:p-6 flex-1 flex flex-col gap-6">
+
+    <!-- SCENARIOS 1 to 5: DUAL COLUMN (Left: Telegram, Right: Decision Card) -->
+    <div id="dualView" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- LEFT: REALISTIC TELEGRAM MOBILE CHANNEL (Col 5) -->
+      <section class="lg:col-span-5 flex flex-col items-center">
+        <div class="w-full max-w-[370px] bg-white border border-slate-300 rounded-[36px] shadow-lg shadow-slate-200/60 overflow-hidden flex flex-col h-[640px]">
+          
+          <!-- Phone Speaker Notch -->
+          <div class="bg-slate-100 pt-2 pb-1.5 flex justify-center items-center">
+            <div class="w-20 h-3.5 bg-slate-300 rounded-full"></div>
+          </div>
+
+          <!-- Telegram Header -->
+          <div class="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-full bg-orange-600 flex items-center justify-center text-white text-xs font-bold shadow-xs">
+                <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-900 flex items-center gap-1">
+                  SuFix Kampüs Asistanı
+                  <i data-lucide="badge-check" class="w-3.5 h-3.5 text-blue-500 fill-blue-500"></i>
+                </div>
+                <div class="text-[10px] text-emerald-600 font-medium" id="tgHeaderStatus">bot • çevrimiçi</div>
+              </div>
+            </div>
+            
+            <!-- Persona Switcher -->
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg text-[10px] font-semibold text-slate-600">
+              <button onclick="setPersona('student')" id="personaStudentBtn" class="px-2 py-1 rounded bg-white text-orange-600 shadow-xs">Öğrenci</button>
+              <button onclick="setPersona('staff')" id="personaStaffBtn" class="px-2 py-1 rounded text-slate-500 hover:text-slate-900">Teknisyen</button>
+            </div>
+          </div>
+
+          <!-- Telegram Chat Messages Container -->
+          <div id="chatContainer" class="flex-1 p-3.5 overflow-y-auto space-y-3 bg-[#eef2f6] text-xs">
+            <!-- Messages rendered dynamically -->
+          </div>
+
+          <!-- Telegram Input Simulator -->
+          <div class="bg-white border-t border-slate-200 p-2.5 flex items-center gap-2">
+            <div class="flex-1 bg-slate-100 rounded-full px-3.5 py-2 text-xs text-slate-400 flex items-center justify-between">
+              <span id="chatInputPlaceholder">Mesajınızı yazın...</span>
+              <i data-lucide="paperclip" class="w-3.5 h-3.5 text-slate-400"></i>
+            </div>
+            <button onclick="nextStep()" class="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-white hover:bg-orange-700 transition shadow-xs" title="Sonraki Adımı Tetikle">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Phone Home Indicator -->
+          <div class="bg-white py-1 flex justify-center">
+            <div class="w-24 h-1 bg-slate-300 rounded-full"></div>
+          </div>
+
+        </div>
+        <span class="text-[11px] text-slate-400 mt-2">Öğrencinin kullandığı Telegram Bot ekranı</span>
+      </section>
+
+      <!-- RIGHT: FOCUSED EXECUTIVE DECISION PANEL (Col 7) -->
+      <section class="lg:col-span-7 flex flex-col gap-4">
+        
+        <!-- Main Structured Incident Card -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col gap-5">
+          
+          <!-- Top Incident Badge & Status -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xs font-mono font-bold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg border border-slate-200">#A102</span>
+              <span id="prioBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-orange-50 text-orange-700 border border-orange-200">
+                YÜKSEK ÖNCELİK
+              </span>
+              <span id="duplicateBadge" class="hidden text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1">
+                <i data-lucide="layers" class="w-3.5 h-3.5"></i> 2x Mükerrer Bildirim (Birleştirildi)
+              </span>
+            </div>
+
+            <div id="statusBadgeContainer">
+              <span id="statusBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                Eksik Bilgi Bekleniyor
+              </span>
+            </div>
+          </div>
+
+          <!-- The Core Thesis: "Öğrencinin Gündelik Dili" vs "YZ Yapılandırılmış Çıkarımı" -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- Before: Öğrencinin Ham Anlatımı -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+              <div>
+                <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wide flex items-center gap-1 mb-2">
+                  <i data-lucide="message-square" class="w-3.5 h-3.5 text-slate-400"></i> Öğrencinin Orijinal İfadesi
+                </span>
+                <p id="studentSpeechText" class="text-sm font-medium text-slate-800 italic leading-relaxed">
+                  "labda net yok makineler açılmıyor"
+                </p>
+              </div>
+
+              <!-- Öğrenci Yanılgısı (Uzmanlık Boşluğu Kanıtı) -->
+              <div class="mt-4 pt-3 border-t border-slate-200/80">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-slate-500">Öğrenci Kategori Tahmini:</span>
+                  <span id="studentGuessBadge" class="px-2 py-0.5 rounded font-semibold bg-rose-50 border border-rose-200 text-rose-700">
+                    Elektrik (Hatalı)
+                  </span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">Öğrenci bilgisayarlar açılmadığı için elektrik arızası sandı.</p>
+              </div>
+            </div>
+
+            <!-- After: SuFix YZ Yapılandırılmış Teşhisi -->
+            <div class="bg-orange-50/50 border border-orange-200 rounded-xl p-4 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[11px] font-bold text-orange-700 uppercase tracking-wide flex items-center gap-1">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-orange-600"></i> YZ Teknik Teşhisi
+                  </span>
+                  <span class="text-[11px] font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                    %88 Güven
+                  </span>
+                </div>
+
+                <div class="space-y-2 text-xs">
+                  <div>
+                    <span class="text-slate-500 block text-[11px]">Önerilen Yetkili Birim:</span>
+                    <span class="font-bold text-slate-900 text-xs">Bilgi İşlem Daire Başkanlığı</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-500 block text-[11px]">Teknik Kök Neden Analizi:</span>
+                    <p class="text-slate-700 leading-snug">
+                      Telefonda Wi-Fi çalıştığı için omurga kesintisi olamaz. Lab 204'teki yerel kenar switch (ağ anahtarı) veya priz portu devredışı.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Konum Çıkarımı -->
+              <div class="mt-4 pt-3 border-t border-orange-200/60 flex items-center gap-1.5 text-xs text-slate-700 font-medium">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-orange-600"></i>
+                <span id="incidentLocationText">Mühendislik B Blok · Kat 2 · Lab 204</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Human in the Loop: Yönetici Karar ve Atama Alanı -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <i data-lucide="user-check" class="w-4 h-4 text-orange-600"></i>
+                  Yönetici Kararı (İnsan Denetimi)
+                </span>
+                <p id="managerInstructionText" class="text-xs text-slate-500 mt-0.5">
+                  Yapay zekâ önerisini onaylayarak doğrudan saha personeline iş emri gönderin.
+                </p>
+              </div>
+
+              <!-- Action Button -->
+              <div class="w-full sm:w-auto">
+                <button id="approveBtn" onclick="approveIncidentAction()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-orange-600 hover:bg-orange-700 transition flex items-center justify-center gap-2 shadow-sm shadow-orange-600/30">
+                  <i data-lucide="check-circle" class="w-4 h-4"></i>
+                  <span>Onayla & Personele Ata</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Assigned Staff Info Bar (Shown when approved) -->
+            <div id="assignedStaffInfo" class="hidden mt-3 pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-700">
+              <span class="flex items-center gap-1.5 font-medium">
+                <i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i>
+                Görevli Teknisyen: <strong class="text-slate-900">Ahmet Yılmaz (Ağ Teknisyeni)</strong>
+              </span>
+              <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px] font-semibold">
+                Saha İş Emri İletildi ✓
+              </span>
+            </div>
+          </div>
+
+          <!-- Live Step Explainer Box for Jury Presentation -->
+          <div class="bg-white border-l-4 border-orange-600 p-3.5 rounded-r-xl shadow-xs text-xs">
+            <span class="font-bold text-slate-900 block mb-0.5" id="juryFocusTitle">Jüriye Gösterilen Katma Değer:</span>
+            <p class="text-slate-600 leading-relaxed" id="juryFocusText">
+              Öğrenci konum belirtmediğinde sistem formu reddetmez; gündelik dille eksik olanı örnekleyerek sorar ve veriyi tamamlar.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- SCENARIO 6: METRICS & PROOF VIEW (Jüri Sunumu Final Slaytı) -->
+    <div id="metricsView" class="hidden flex-col gap-6">
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
+        
+        <div class="max-w-3xl mb-8">
+          <span class="text-xs font-bold uppercase tracking-wider text-orange-600 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-md">
+            Hipotez Doğrulaması & Katma Değer
+          </span>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight mt-2">
+            "Öğrenci uzman olmak zorunda değil; gördüğünü anlatsın yeter."
+          </h2>
+          <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+            `PROJECT.md` Bölüm 2.2 ve Bölüm 10.3 gereğince toplanan 142 canlı kampüs testinde form tabanlı sistemler ile SuFix karşılaştırması.
+          </p>
+        </div>
+
+        <!-- 3 Core Proof Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          
+          <!-- Proof 1: Uzmanlık Boşluğu -->
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs font-bold text-slate-600 mb-2">
+                <span>ÖĞRENCİ FORM YANILGISI</span>
+                <span class="text-rose-600 font-extrabold">%66 Yanlış</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-3 mb-3 overflow-hidden">
+                <div class="bg-rose-500 h-3 rounded-full" style="width: 66%"></div>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Klasik kategori seçmeli formlarda öğrencilerin <strong class="text-slate-900">%66'sı</strong> arızayı yanlış birime iletti ve iş emirleri birimler arasında süründü.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-200 text-[11px] text-slate-500 font-medium">
+              ❌ Geleneksel kategori formu iflası
+            </div>
+          </div>
+
+          <!-- Proof 2: YZ İsabeti -->
+          <div class="p-5 rounded-2xl bg-orange-50/60 border border-orange-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs font-bold text-orange-900 mb-2">
+                <span>SUFİX YZ DOĞRU BİRİM İSABETİ</span>
+                <span class="text-orange-600 font-extrabold">%94.2 Uyum</span>
+              </div>
+              <div class="w-full bg-orange-200 rounded-full h-3 mb-3 overflow-hidden">
+                <div class="bg-orange-600 h-3 rounded-full" style="width: 94.2%"></div>
+              </div>
+              <p class="text-xs text-slate-700 leading-relaxed">
+                SuFix serbest dilden kök nedeni bularak <strong class="text-slate-900">%94.2</strong> oranında yöneticinin onayladığı doğru birimi tek seferde buldu.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-orange-200 text-[11px] text-orange-800 font-semibold">
+              ✓ Sıfır hatalı birim transferi
+            </div>
+          </div>
+
+          <!-- Proof 3: Mükerrer Tasarrufu -->
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs font-bold text-slate-600 mb-2">
+                <span>MÜKERRER BİLDİRİM ÖNLEME</span>
+                <span class="text-blue-600 font-extrabold">%42.8 Tasarruf</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-3 mb-3 overflow-hidden">
+                <div class="bg-blue-600 h-3 rounded-full" style="width: 42.8%"></div>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Aynı odadaki arıza için gelen tekrarlı bildirimler YZ ile birleştirildi; santral kirliliği ve mükerrer personel çıkışı <strong class="text-slate-900">%42.8</strong> engellendi.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-200 text-[11px] text-blue-700 font-semibold">
+              ✓ Gereksiz iş gücü seferberliği önlendi
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Back to Demo Button -->
+        <div class="mt-8 pt-4 border-t border-slate-200 flex justify-end">
+          <button onclick="setStep(1)" class="px-5 py-2.5 rounded-xl bg-orange-600 text-white font-bold text-xs hover:bg-orange-700 transition flex items-center gap-2">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Senaryoyu Baştan Başlat
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- JAVASCRIPT STATE CONTROLLER -->
+  <script>
+    let currentStep = 1;
+    let activePersona = 'student'; // 'student' or 'staff'
+    let isCleanMode = false;
+
+    // Realistic Telegram Dialogues for Each Scenario Step
+    const studentDialogues = {
+      step1: [
+        { sender: 'user', text: 'hocam labda net yok makineler açılmıyor ders yapamıyoruz', time: '13:14' },
+        { sender: 'bot', text: '📍 Merhaba! Arızanın tam olarak nerede olduğunu anlayamadım.<br><br>Ekiplerimizin hemen müdahale edebilmesi için <b>fakülte, blok ve oda numarasını</b> yazar mısın?<br><br><i>Örnek: Mühendislik B Blok 2. kat 204 nolu lab</i>', time: '13:14' }
+      ],
+      step2: [
+        { sender: 'user', text: 'hocam labda net yok makineler açılmıyor ders yapamıyoruz', time: '13:14' },
+        { sender: 'bot', text: '📍 Merhaba! Arızanın tam olarak nerede olduğunu anlayamadım.<br><br>Ekiplerimizin hemen müdahale edebilmesi için <b>fakülte, blok ve oda numarasını</b> yazar mısın?<br><br><i>Örnek: Mühendislik B Blok 2. kat 204 nolu lab</i>', time: '13:14' },
+        { sender: 'user', text: 'Mühendislik B blok 2. kat 204 labındayız, telefondan eduroama girebiliyorum ama pc kablolarında internet yok', time: '13:15' },
+        { sender: 'bot', text: '✅ Teşekkürler! Bildiriminiz alındı. <b>Takip No: #A102</b><br><br>🤖 <b>YZ Teşhisi:</b> Sorununuz <i>Bilgi İşlem Daire Başkanlığı</i> yetki alanında değerlendirildi ve yönetici onayına sunuldu. Gelişmelerden sizi haberdar edeceğiz.', time: '13:15' }
+      ],
+      step3: [
+        { sender: 'user', text: 'Mühendislik B blok 2. kat 204 labındayız...', time: '13:15' },
+        { sender: 'bot', text: '✅ Bildiriminiz alındı. Takip No: <b>#A102</b>', time: '13:15' },
+        { sender: 'bot', text: '👨‍💼 <b>Durum Güncellemesi (#A102):</b> Talebiniz yönetici tarafından onaylandı ve yetkili personele (<b>Ahmet Yılmaz - Ağ Teknisyeni</b>) iletildi. Ekip görevi üstlendi.', time: '13:17' }
+      ],
+      step4: [
+        // Duplicate report from Student 2
+        { sender: 'user2', text: 'b blok 204 labda kablolu internet gitmiş hiçbir bilgisayar bağlanmıyor', time: '13:19' },
+        { sender: 'bot', text: 'ℹ️ <b>Mevcut İş Emri Bulundu (#A102):</b><br>Bildirdiğiniz arıza için teknik ekibimiz şu anda sahada müdahale etmektedir.<br><br>Aynı arıza için sizi de bildirim listesine ekledik. Sorun çözüldüğünde size de mesaj gelecektir. Teşekkür ederiz!', time: '13:19' }
+      ],
+      step5: [
+        { sender: 'bot', text: '🎉 <b>Arıza Giderildi! (#A102)</b><br><br>Mühendislik B Blok 204 labındaki kablolu internet erişim sorunu çözülmüştür.<br><br><i>Teknisyen Notu:</i> "Odadaki anahtar switch portu resetlendi, kablo hattı test edildi. Tüm terminaller hatta bağlandı."', time: '13:28' }
+      ]
+    };
+
+    const staffDialogues = {
+      step3: [
+        { sender: 'bot', text: '🚨 <b>YENİ İŞ EMRİ ATANDI (#A102)</b><br><br><b>Konum:</b> Mühendislik B Blok Kat 2 Lab 204<br><b>Arıza:</b> Kablolu LAN port erişim sorunu<br><b>Öncelik:</b> YÜKSEK<br><b>YZ Notu:</b> Omurga faal, switch resetlenmeli.', time: '13:17', hasAction: true }
+      ],
+      step4: [
+        { sender: 'bot', text: '🚨 <b>İŞ EMRİ (#A102)</b><br>Konum: Müh B-204 (İşlemde)<br><br>⚠️ <b>Ek Bildirim:</b> 1 öğrenci daha aynı arızayı bildirdi (Toplam 2 bildiren).', time: '13:20' }
+      ],
+      step5: [
+        { sender: 'bot', text: '✅ <b>İşlem Kapatıldı:</b> #A102 nolu arıza başarıyla tamamlandı olarak işaretlendi.', time: '13:28' }
+      ]
+    };
+
+    // Step Explanations and Data for the Right Panel
+    const stepConfigs = {
+      1: {
+        badge: '1. Adım: Eksik Bilgi Bildirimi',
+        prio: 'YÜKSEK ÖNCELİK',
+        statusText: 'Eksik Bilgi Bekleniyor',
+        statusClass: 'bg-amber-50 text-amber-700 border-amber-200',
+        duplicate: false,
+        rawSpeech: '“labda net yok makineler açılmıyor”',
+        studentGuess: 'Elektrik (Hatalı)',
+        location: 'Konum Henüz Belirsiz...',
+        approved: false,
+        juryTitle: '1. Adım Katma Değeri — Akıllı Eksik Bilgi Tamamlama:',
+        juryText: 'Öğrenci konum yazmadığında geleneksel formlar hata verir veya formu çöpe atar. SuFix gündelik dille eksik olanı tespit edip kibarca örnek vererek öğrenciyi yönlendirir.'
+      },
+      2: {
+        badge: '2. Adım: YZ Analizi & Kök Neden Teşhisi',
+        prio: 'YÜKSEK ÖNCELİK',
+        statusText: 'Yönetici Onayı Bekliyor',
+        statusClass: 'bg-orange-50 text-orange-700 border-orange-200',
+        duplicate: false,
+        rawSpeech: '“Mühendislik B blok 2. kat 204 labındayız, telefondan eduroama girebiliyorum ama pc kablolarında internet yok”',
+        studentGuess: 'Elektrik (Hatalı)',
+        location: 'Mühendislik B Blok · Kat 2 · Lab 204',
+        approved: false,
+        juryTitle: '2. Adım Katma Değeri — Uzmanlık Boşluğunun Çözülmesi:',
+        juryText: 'Öğrenci bilgisayarlar açılmadığı için "Elektrik" zannetmişti. YZ, telefonun Wi-Fi çektiğini anlayarak ana şebekeyi değil, odadaki switch port arızasını tespit edip Bilgi İşlem\'e yönlendirdi.'
+      },
+      3: {
+        badge: '3. Adım: Yönetici Onayı & Sahaya Görevlendirme',
+        prio: 'YÜKSEK ÖNCELİK',
+        statusText: 'Personele Atandı',
+        statusClass: 'bg-blue-50 text-blue-700 border-blue-200',
+        duplicate: false,
+        rawSpeech: '“Mühendislik B blok 2. kat 204 labındayız...”',
+        studentGuess: 'Elektrik (Düzeltildi)',
+        location: 'Mühendislik B Blok · Kat 2 · Lab 204',
+        approved: true,
+        juryTitle: '3. Adım Katma Değeri — İnsan Denetimi (Human-in-the-Loop):',
+        juryText: 'YZ son kararı vermez; önerir. Yönetici öneriyi tek tıkla doğrular ve saha personeline Telegram üzerinden anlık iş emri fırlatılır.'
+      },
+      4: {
+        badge: '4. Adım: Mükerrer Bildirim Tespiti & Konsolidasyon',
+        prio: 'YÜKSEK ÖNCELİK',
+        statusText: 'İşlemde (2x Bildirim)',
+        statusClass: 'bg-blue-50 text-blue-700 border-blue-200',
+        duplicate: true,
+        rawSpeech: '“b blok 204 labda kablolu internet gitmiş hiçbir bilgisayar bağlanmıyor” (2. Öğrenci)',
+        studentGuess: 'Aynı Olayla Eşleşti',
+        location: 'Mühendislik B Blok · Kat 2 · Lab 204',
+        approved: true,
+        juryTitle: '4. Adım Katma Değeri — Gereksiz Çağrı ve Seferberlik Tasarrufu (%42.8):',
+        juryText: 'Aynı arıza ikinci bir öğrenci tarafından yazıldığında yeni iş emri açılmaz; açık olan #A102 ile birleştirilir ve öğrenciye "Ekibimiz zaten çalışıyor" yanıtı verilerek santral kilitlenmesi önlenir.'
+      },
+      5: {
+        badge: '5. Adım: Saha Çözümü (Done) & Otomatik Bilgilendirme',
+        prio: 'ÇÖZÜLDÜ',
+        statusText: 'Tamamlandı (Done)',
+        statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        duplicate: true,
+        rawSpeech: '“Mühendislik B Blok 204 kablolu ağ arızası giderildi.”',
+        studentGuess: 'Başarıyla Kapatıldı',
+        location: 'Mühendislik B Blok · Kat 2 · Lab 204',
+        approved: true,
+        juryTitle: '5. Adım Katma Değeri — Şeffaf Süreç ve Geri Bildirim:',
+        juryText: 'Teknisyen işi kapattığı anda, bu arızaya bağlı olan 1. ve 2. öğrencinin cebine aynı anda çözüm bildirimi gider. Öğrenci sürecin sonucunu öğrenir.'
+      }
+    };
+
+    function setStep(step) {
+      currentStep = step;
+
+      // Update Stepper Buttons
+      for (let i = 1; i <= 6; i++) {
+        const btn = document.getElementById(`stepBtn${i}`);
+        if (i === step) {
+          btn.className = "px-3 py-1.5 rounded-lg transition step-btn-active";
+        } else {
+          btn.className = "px-3 py-1.5 rounded-lg transition step-btn-inactive";
+        }
+      }
+
+      if (step === 6) {
+        document.getElementById('dualView').classList.add('hidden');
+        document.getElementById('metricsView').classList.remove('hidden');
+        document.getElementById('currentStepBadge').innerText = "6. Adım: Jüri Analitiği & Kanıt";
+      } else {
+        document.getElementById('dualView').classList.remove('hidden');
+        document.getElementById('metricsView').classList.add('hidden');
+
+        const cfg = stepConfigs[step];
+        document.getElementById('currentStepBadge').innerText = cfg.badge;
+        document.getElementById('studentSpeechText').innerText = cfg.rawSpeech;
+        document.getElementById('studentGuessBadge').innerText = cfg.studentGuess;
+        document.getElementById('incidentLocationText').innerText = cfg.location;
+        document.getElementById('juryFocusTitle').innerText = cfg.juryTitle;
+        document.getElementById('juryFocusText').innerText = cfg.juryText;
+
+        // Status badge
+        const statusBadge = document.getElementById('statusBadge');
+        statusBadge.className = `text-xs font-bold px-3 py-1 rounded-full border flex items-center gap-1.5 ${cfg.statusClass}`;
+        statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full ${step === 5 ? 'bg-emerald-500' : 'bg-orange-500 animate-pulse'}"></span> ${cfg.statusText}`;
+
+        // Duplicate badge
+        const dupBadge = document.getElementById('duplicateBadge');
+        if (cfg.duplicate) {
+          dupBadge.classList.remove('hidden');
+        } else {
+          dupBadge.classList.add('hidden');
+        }
+
+        // Approval button & staff assignment
+        const approveBtn = document.getElementById('approveBtn');
+        const staffInfo = document.getElementById('assignedStaffInfo');
+        if (cfg.approved) {
+          approveBtn.className = "w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-100 border border-emerald-200 flex items-center justify-center gap-2 cursor-default";
+          approveBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> <span>İş Emri Onaylandı</span>`;
+          staffInfo.classList.remove('hidden');
+        } else {
+          approveBtn.className = "w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-orange-600 hover:bg-orange-700 transition flex items-center justify-center gap-2 shadow-sm shadow-orange-600/30";
+          approveBtn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i> <span>Onayla & Personele Ata</span>`;
+          staffInfo.classList.add('hidden');
+        }
+
+        renderTelegram();
+      }
+
+      lucide.createIcons();
+    }
+
+    function renderTelegram() {
+      const container = document.getElementById('chatContainer');
+      container.innerHTML = '';
+
+      let msgs = [];
+      if (activePersona === 'student') {
+        if (currentStep === 1) msgs = studentDialogues.step1;
+        else if (currentStep === 2) msgs = studentDialogues.step2;
+        else if (currentStep === 3) msgs = studentDialogues.step3;
+        else if (currentStep === 4) msgs = studentDialogues.step4;
+        else msgs = studentDialogues.step5;
+      } else {
+        if (currentStep <= 3) msgs = staffDialogues.step3;
+        else if (currentStep === 4) msgs = staffDialogues.step4;
+        else msgs = staffDialogues.step5;
+      }
+
+      msgs.forEach(m => {
+        const isUser = m.sender === 'user' || m.sender === 'user2';
+        const div = document.createElement('div');
+        div.className = `flex flex-col ${isUser ? 'items-end' : 'items-start'} max-w-[88%] ${isUser ? 'ml-auto' : 'mr-auto'}`;
+
+        let senderTag = '';
+        if (m.sender === 'user2') {
+          senderTag = `<span class="text-[9px] font-bold text-blue-600 mb-0.5">2. Öğrenci (Aynı Arıza)</span>`;
+        } else if (m.sender === 'user') {
+          senderTag = `<span class="text-[9px] font-bold text-slate-500 mb-0.5">Öğrenci 1</span>`;
+        }
+
+        let actionBtn = '';
+        if (m.hasAction) {
+          actionBtn = `<div class="mt-2.5 pt-2 border-t border-slate-100 flex justify-end">
+            <button onclick="setStep(4)" class="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-[11px] font-bold shadow-xs">✋ Üstlendim</button>
+          </div>`;
+        }
+
+        div.innerHTML = `
+          ${senderTag}
+          <div class="${isUser ? 'tg-user-bubble text-slate-900' : 'tg-bot-bubble text-slate-800'} p-3 shadow-xs leading-relaxed text-[11.5px]">
+            ${m.text}
+            ${actionBtn}
+            <div class="text-[9px] ${isUser ? 'text-emerald-700' : 'text-slate-400'} text-right mt-1 font-mono">${m.time} ✓✓</div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function approveIncidentAction() {
+      setStep(3);
+    }
+
+    function setPersona(p) {
+      activePersona = p;
+      const sBtn = document.getElementById('personaStudentBtn');
+      const staffBtn = document.getElementById('personaStaffBtn');
+
+      if (p === 'student') {
+        sBtn.className = "px-2 py-1 rounded bg-white text-orange-600 shadow-xs";
+        staffBtn.className = "px-2 py-1 rounded text-slate-500 hover:text-slate-900";
+        document.getElementById('tgHeaderStatus').innerText = "bot • çevrimiçi";
+      } else {
+        staffBtn.className = "px-2 py-1 rounded bg-white text-orange-600 shadow-xs";
+        sBtn.className = "px-2 py-1 rounded text-slate-500 hover:text-slate-900";
+        document.getElementById('tgHeaderStatus').innerText = "teknisyen kanalı";
+      }
+      renderTelegram();
+      lucide.createIcons();
+    }
+
+    function nextStep() {
+      if (currentStep < 6) {
+        setStep(currentStep + 1);
+      } else {
+        setStep(1);
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        setStep(currentStep - 1);
+      }
+    }
+
+    function toggleCleanMode() {
+      isCleanMode = !isCleanMode;
+      const nav = document.getElementById('stepperNav');
+      if (isCleanMode) {
+        nav.classList.add('hidden');
+      } else {
+        nav.classList.remove('hidden');
+      }
+    }
+
+    // Keyboard navigation (Left / Right arrow keys for seamless presentation)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextStep();
+      else if (e.key === 'ArrowLeft') prevStep();
+    });
+
+    // Boot
+    window.onload = () => {
+      setStep(1);
+    };
+  </script>
+</body>
+</html>
